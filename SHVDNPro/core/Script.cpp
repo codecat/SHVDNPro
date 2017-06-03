@@ -33,6 +33,22 @@ void GTA::Script::Yield()
 	Wait(0);
 }
 
+void GTA::Script::OnTick()
+{
+}
+
+void GTA::Script::OnPresent(System::IntPtr swapchain)
+{
+}
+
+void GTA::Script::OnKeyDown(System::Windows::Forms::KeyEventArgs^ args)
+{
+}
+
+void GTA::Script::OnKeyUp(System::Windows::Forms::KeyEventArgs^ args)
+{
+}
+
 GTA::Script^ GTA::Script::GetExecuting()
 {
 	void* currentFiber = GetCurrentFiber();
@@ -55,7 +71,7 @@ void GTA::Script::WaitExecuting(int ms)
 {
 	auto script = GetExecuting();
 	if (script == nullptr) {
-		throw gcnew System::Exception("Illegal call to WaitExecuting() from a non-script script fiber!");
+		throw gcnew System::Exception("Illegal call to WaitExecuting() from a non-script fiber!");
 	}
 	script->Wait(ms);
 }
@@ -63,4 +79,31 @@ void GTA::Script::WaitExecuting(int ms)
 void GTA::Script::YieldExecuting()
 {
 	WaitExecuting(0);
+}
+
+void GTA::Script::ProcessOneTick()
+{
+	System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>^ ev = nullptr;
+
+	while (m_keyboardEvents->TryDequeue(ev)) {
+		try {
+			if (ev->Item1) {
+				OnKeyDown(ev->Item2);
+			} else {
+				OnKeyUp(ev->Item2);
+			}
+		} catch (System::Exception^ ex) {
+			if (ev->Item1) {
+				GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnKeyDown: {0}", ex->ToString());
+			} else {
+				GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnKeyUp: {0}", ex->ToString());
+			}
+		}
+	}
+
+	try {
+		OnTick();
+	} catch (System::Exception^ ex) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnTick: {0}", ex->ToString());
+	}
 }

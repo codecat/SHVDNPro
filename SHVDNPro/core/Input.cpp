@@ -1,5 +1,7 @@
 #include <Input.h>
 
+#include <ManagedGlobals.h>
+
 #include <Windows.h>
 
 void ManagedScriptKeyboardMessage(unsigned long key, unsigned short repeats, unsigned char scanCode, bool isExtended, bool isWithAlt, bool wasDownBefore, bool isUpNow)
@@ -15,7 +17,23 @@ void ManagedScriptKeyboardMessage(unsigned long key, unsigned short repeats, uns
 	GTA::Input::_keyboardState[key] = status;
 
 	if (GTA::Input::_captureKeyboardEvents) {
-		//TODO: Call method for scripts
+		auto wfkey = (System::Windows::Forms::Keys)key;
+		if (ctrl) {
+			wfkey = wfkey | System::Windows::Forms::Keys::Control;
+		}
+		if (shift) {
+			wfkey = wfkey | System::Windows::Forms::Keys::Shift;
+		}
+		if (isWithAlt) {
+			wfkey = wfkey | System::Windows::Forms::Keys::Alt;
+		}
+
+		auto args = gcnew System::Windows::Forms::KeyEventArgs(wfkey);
+		auto eventinfo = gcnew System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>(status, args);
+
+		for each (auto script in GTA::ManagedGlobals::g_scripts) {
+			script->m_keyboardEvents->Enqueue(eventinfo);
+		}
 	}
 
 	//TODO: API for scancodes or WM_CHAR text input?

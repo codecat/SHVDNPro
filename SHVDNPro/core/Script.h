@@ -8,6 +8,7 @@ namespace GTA
 		void* m_fiberMain;
 		void* m_fiberCurrent;
 		int m_fiberWait;
+		System::Collections::Concurrent::ConcurrentQueue<System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>^>^ m_keyboardEvents = gcnew System::Collections::Concurrent::ConcurrentQueue<System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>^>();
 
 	public:
 		Script();
@@ -15,10 +16,16 @@ namespace GTA
 		void Wait(int ms);
 		void Yield();
 
-		virtual void OnTick() = 0;
+		virtual void OnTick();
+		virtual void OnPresent(System::IntPtr swapchain);
+		virtual void OnKeyDown(System::Windows::Forms::KeyEventArgs^ args);
+		virtual void OnKeyUp(System::Windows::Forms::KeyEventArgs^ args);
 
 		static Script^ GetExecuting();
 		static void WaitExecuting(int ms);
 		static void YieldExecuting();
+
+	internal:
+		void ProcessOneTick();
 	};
 }

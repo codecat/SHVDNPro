@@ -96,14 +96,28 @@ static int ManagedScriptGetWaitTime(int scriptIndex)
 	return GTA::ManagedGlobals::g_scripts[scriptIndex]->m_fiberWait;
 }
 
+static void ManagedScriptResetWaitTime(int scriptIndex)
+{
+	GTA::ManagedGlobals::g_scripts[scriptIndex]->m_fiberWait = 0;
+}
+
 static void ManagedScriptTick(int scriptIndex)
 {
-	try {
-		GTA::ManagedGlobals::g_scripts[scriptIndex]->OnTick();
-	} catch (System::Exception^ ex) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnTick: {0}", ex->ToString());
-	}
+	GTA::ManagedGlobals::g_scripts[scriptIndex]->ProcessOneTick();
 	GTA::Native::Function::ClearStringPool();
+}
+
+static void ManagedD3DPresent(void* swapchain)
+{
+	System::IntPtr ptrSwapchain(swapchain);
+
+	for each (auto script in GTA::ManagedGlobals::g_scripts) {
+		try {
+			script->OnPresent(ptrSwapchain);
+		} catch (System::Exception^ ex) {
+			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnPresent: {0}", ex->ToString());
+		}
+	}
 }
 
 static void ManagedInitialize();
@@ -137,8 +151,6 @@ struct ScriptFiberInfo
 	void* m_fiberScript;
 };
 
-static int _currentIndex = 0;
-
 static HMODULE _instance;
 
 static std::vector<ScriptFiberInfo> _scriptFibers;
@@ -155,7 +167,6 @@ static void ScriptMainFiber(LPVOID pv)
 static void ScriptMain(int index)
 {
 	ScriptFiberInfo fi;
-	//fi.m_index = _currentIndex++;
 	fi.m_index = index;
 	fi.m_fiberMain = GetCurrentFiber();
 	fi.m_fiberScript = CreateFiber(0, ScriptMainFiber, (LPVOID)&fi);
@@ -165,6 +176,7 @@ static void ScriptMain(int index)
 	while (true) {
 		int ms = ManagedScriptGetWaitTime(fi.m_index);
 		scriptWait(ms);
+		ManagedScriptResetWaitTime(fi.m_index);
 		SwitchToFiber(fi.m_fiberScript);
 	}
 }
@@ -269,11 +281,16 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved)
 		ManagedInitialize();
 		keyboardHandlerRegister(&ScriptKeyboardMessage);
 		presentCallbackRegister(&DXGIPresent);
+
 	} else if (reason == DLL_PROCESS_DETACH) {
+		presentCallbackUnregister(&DXGIPresent);
+		keyboardHandlerUnregister(&ScriptKeyboardMessage);
+		scriptUnregister(hInstance);
+
 		for (auto fi : _scriptFibers) {
 			DeleteFiber(fi.m_fiberScript);
 		}
-		scriptUnregister(hInstance);
 	}
+
 	return TRUE;
 }
