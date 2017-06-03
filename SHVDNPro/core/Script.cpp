@@ -4,6 +4,8 @@
 
 #include <ManagedGlobals.h>
 
+#include <Config.h>
+
 #pragma unmanaged
 #include <Windows.h>
 #undef Yield
@@ -34,15 +36,16 @@ void GTA::Script::Yield()
 GTA::Script^ GTA::Script::GetExecuting()
 {
 	void* currentFiber = GetCurrentFiber();
+
+	// I don't know if GetCurrentFiber ever returns null, but whatever
 	if (currentFiber == nullptr) {
 		return nullptr;
 	}
 
 	for each (auto script in GTA::ManagedGlobals::g_scripts) {
-		if (script->m_fiberCurrent != currentFiber) {
-			continue;
+		if (script->m_fiberCurrent == currentFiber) {
+			return script;
 		}
-		return script;
 	}
 
 	return nullptr;
@@ -54,6 +57,7 @@ void GTA::Script::WaitExecuting(int ms)
 	if (script == nullptr) {
 		throw gcnew System::Exception("Illegal call to WaitExecuting() from a non-script script fiber!");
 	}
+	script->Wait(ms);
 }
 
 void GTA::Script::YieldExecuting()

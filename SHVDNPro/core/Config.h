@@ -1,0 +1,3 @@
+#pragma once
+
+#define THROW_ON_MULTITHREADED_NATIVES

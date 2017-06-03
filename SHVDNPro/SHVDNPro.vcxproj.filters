@@ -23,6 +23,9 @@
     <Filter Include="scripting\World">
       <UniqueIdentifier>{731f929c-1e7f-451e-a7f6-2f64209e5e67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="core\Tasks">
+      <UniqueIdentifier>{17bdd362-6b4e-4f1d-8916-defa97b866c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="core\Function.cpp">
@@ -58,6 +61,12 @@
     </ClCompile>
     <ClCompile Include="core\Input.cpp">
       <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\InputArgument.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Tasks\NativeTask.cpp">
+      <Filter>core\Tasks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -98,6 +107,18 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\ManagedGlobals.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\InputArgument.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\IScriptTask.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Tasks\NativeTask.h">
+      <Filter>core\Tasks</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Config.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

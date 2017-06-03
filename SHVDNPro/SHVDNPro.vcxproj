@@ -82,14 +82,18 @@
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="core\Function.cpp" />
     <ClCompile Include="core\Input.cpp" />
+    <ClCompile Include="core\InputArgument.cpp" />
     <ClCompile Include="core\Main.cpp" />
     <ClCompile Include="core\MemoryAccess.cpp" />
     <ClCompile Include="core\NativeObjects.cpp" />
     <ClCompile Include="core\OutputArgument.cpp" />
     <ClCompile Include="core\Script.cpp" />
+    <ClInclude Include="core\Config.h" />
     <ClInclude Include="core\Function.h" />
     <ClInclude Include="core\INativeValue.h" />
     <ClInclude Include="core\Input.h" />
+    <ClInclude Include="core\InputArgument.h" />
+    <ClInclude Include="core\IScriptTask.h" />
     <ClInclude Include="core\ManagedGlobals.h" />
     <ClInclude Include="core\MemoryAccess.h" />
     <ClInclude Include="core\NativeHashes.h" />
@@ -99,12 +103,14 @@
   </ItemGroup>
   <!-- Additional source files -->
   <ItemGroup>
+    <ClCompile Include="core\Tasks\NativeTask.cpp" />
     <ClCompile Include="scripting\Matrix.cpp" />
     <ClCompile Include="scripting\Quaternion.cpp" />
     <ClCompile Include="scripting\Vector2.cpp" />
     <ClCompile Include="scripting\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\Tasks\NativeTask.h" />
     <ClInclude Include="scripting\Matrix.hpp" />
     <ClInclude Include="scripting\Quaternion.hpp" />
     <ClInclude Include="scripting\Vector2.hpp" />

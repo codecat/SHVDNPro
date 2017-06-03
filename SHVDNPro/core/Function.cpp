@@ -3,12 +3,26 @@
 #include <NativeObjects.h>
 #include <ManagedGlobals.h>
 
+#include <Config.h>
+
+#ifdef THROW_ON_MULTITHREADED_NATIVES
+#include <Script.h>
+#endif
+
 #pragma unmanaged
 #include <main.h>
 #pragma managed
 
 generic <typename T> T GTA::Native::Function::Call(GTA::Hash hash, ... array<System::Object^>^ arguments)
 {
+	//TODO: If calling outside of the executing fiber, queue a NativeTask to an SVHDN control thread
+
+#ifdef THROW_ON_MULTITHREADED_NATIVES
+	if (GTA::Script::GetExecuting() == nullptr) {
+		throw gcnew System::Exception("Illegal native call outside of main script thread!");
+	}
+#endif
+
 	nativeInit((UINT64)hash);
 	for each (auto arg in arguments) {
 		nativePush64(EncodeObject(arg));
@@ -18,6 +32,12 @@ generic <typename T> T GTA::Native::Function::Call(GTA::Hash hash, ... array<Sys
 
 void GTA::Native::Function::Call(GTA::Hash hash, ... array<System::Object^>^ arguments)
 {
+#ifdef THROW_ON_MULTITHREADED_NATIVES
+	if (GTA::Script::GetExecuting() == nullptr) {
+		throw gcnew System::Exception("Illegal native call outside of main script thread!");
+	}
+#endif
+
 	nativeInit((UINT64)hash);
 	for each (auto arg in arguments) {
 		nativePush64(EncodeObject(arg));
