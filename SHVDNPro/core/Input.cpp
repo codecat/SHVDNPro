@@ -32,6 +32,9 @@ void ManagedScriptKeyboardMessage(unsigned long key, unsigned short repeats, uns
 		auto eventinfo = gcnew System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>(status, args);
 
 		for each (auto script in GTA::ManagedGlobals::g_scripts) {
+			if (script == nullptr) {
+				continue;
+			}
 			script->m_keyboardEvents->Enqueue(eventinfo);
 		}
 	}

@@ -68,6 +68,9 @@
     <ClCompile Include="core\Tasks\NativeTask.cpp">
       <Filter>core\Tasks</Filter>
     </ClCompile>
+    <ClCompile Include="core\GlobalVariable.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Function.h">
@@ -119,6 +122,9 @@
       <Filter>core\Tasks</Filter>
     </ClInclude>
     <ClInclude Include="core\Config.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\GlobalVariable.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

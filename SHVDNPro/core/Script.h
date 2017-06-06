@@ -16,6 +16,7 @@ namespace GTA
 		void Wait(int ms);
 		void Yield();
 
+		virtual void OnInit();
 		virtual void OnTick();
 		virtual void OnPresent(System::IntPtr swapchain);
 		virtual void OnKeyDown(System::Windows::Forms::KeyEventArgs^ args);

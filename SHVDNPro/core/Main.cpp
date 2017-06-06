@@ -5,6 +5,7 @@
 #include <Input.h>
 
 #include <MemoryAccess.h>
+#include <GlobalVariable.h>
 #include <NativeObjects.h>
 #include <NativeHashes.h>
 #include <INativeValue.h>
@@ -36,9 +37,9 @@ public:
 	}
 };
 
-array<GTA::Script^>^ LoadAllScripts()
+array<System::Type^>^ LoadAllTypes()
 {
-	auto ret = gcnew System::Collections::Generic::List<GTA::Script^>();
+	auto ret = gcnew System::Collections::Generic::List<System::Type^>();
 
 	auto curDir = System::Reflection::Assembly::GetExecutingAssembly()->Location;
 	curDir = System::IO::Path::GetDirectoryName(curDir);
@@ -47,13 +48,19 @@ array<GTA::Script^>^ LoadAllScripts()
 	//TODO: Load using AppDomain so we can unload (and shadowcopy) properly
 
 	for each (auto file in files) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("Loading assembly {0}", file);
+
 		auto fileName = System::IO::Path::GetFileName(file);
 
 		System::Reflection::Assembly^ assembly = nullptr;
 		try {
 			assembly = System::Reflection::Assembly::LoadFrom(file);
+		} catch (System::BadImageFormatException^) {
+			continue;
 		} catch (System::Exception^ ex) {
 			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Assembly load exception for {0}: {1}", fileName, ex->ToString());
+		} catch (...) {
+			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while loading assembly!");
 		}
 
 		GTA::ManagedGlobals::g_logWriter->WriteLine("Loaded assembly {0}", assembly);
@@ -64,46 +71,91 @@ array<GTA::Script^>^ LoadAllScripts()
 					continue;
 				}
 
-				GTA::Script^ script = static_cast<GTA::Script^>(System::Activator::CreateInstance(type));
-				ret->Add(script);
+				ret->Add(type);
 
-				GTA::ManagedGlobals::g_logWriter->WriteLine("Instantiated {0}", type->FullName);
+				GTA::ManagedGlobals::g_logWriter->WriteLine("Registered type {0}", type->FullName);
 			}
 		} catch (System::Reflection::ReflectionTypeLoadException^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while loading type: {0}", ex->ToString());
+			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while iterating types: {0}", ex->ToString());
 			for each (auto loaderEx in ex->LoaderExceptions) {
 				GTA::ManagedGlobals::g_logWriter->WriteLine("***    {0}", loaderEx->ToString());
 			}
 			continue;
 		} catch (System::Exception^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while loading assembly: {0}", ex->ToString());
+			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while iterating types: {0}", ex->ToString());
+			continue;
+		} catch (...) {
+			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while iterating types");
 			continue;
 		}
+
+		GTA::ManagedGlobals::g_logWriter->WriteLine("Done iterating assembly");
+	}
+
+	if (ret->Count > 20) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("*** WARNING: We can't have more than 20 scripts, yet we have {0}!", ret->Count);
 	}
 
 	return ret->ToArray();
 }
 
-static void ManagedScriptInit(int scriptIndex, void* fiberMain, void* fiberScript)
+static bool ManagedScriptInit(int scriptIndex, void* fiberMain, void* fiberScript)
 {
-	auto script = GTA::ManagedGlobals::g_scripts[scriptIndex];
+	auto scriptType = GTA::ManagedGlobals::g_scriptTypes[scriptIndex];
+
+	GTA::ManagedGlobals::g_logWriter->WriteLine("Instantiating {0}", scriptType->FullName);
+
+	GTA::Script^ script = nullptr;
+	try {
+		script = static_cast<GTA::Script^>(System::Activator::CreateInstance(scriptType));
+	} catch (System::Reflection::ReflectionTypeLoadException^ ex) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while instantiating script: {0}", ex->ToString());
+		for each (auto loaderEx in ex->LoaderExceptions) {
+			GTA::ManagedGlobals::g_logWriter->WriteLine("***    {0}", loaderEx->ToString());
+		}
+		return false;
+	} catch (System::Exception^ ex) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while instantiating script: {0}", ex->ToString());
+		return false;
+	} catch (...) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while instantiating script!");
+		return false;
+	}
+
+	GTA::ManagedGlobals::g_logWriter->WriteLine("Instantiated {0}", scriptType->FullName);
+
+	GTA::ManagedGlobals::g_scripts[scriptIndex] = script;
 	script->m_fiberMain = fiberMain;
 	script->m_fiberCurrent = fiberScript;
+	script->OnInit();
+
+	return true;
 }
 
 static int ManagedScriptGetWaitTime(int scriptIndex)
 {
-	return GTA::ManagedGlobals::g_scripts[scriptIndex]->m_fiberWait;
+	auto script = GTA::ManagedGlobals::g_scripts[scriptIndex];
+	if (script == nullptr) {
+		return 0;
+	}
+	return script->m_fiberWait;
 }
 
 static void ManagedScriptResetWaitTime(int scriptIndex)
 {
-	GTA::ManagedGlobals::g_scripts[scriptIndex]->m_fiberWait = 0;
+	auto script = GTA::ManagedGlobals::g_scripts[scriptIndex];
+	if (script == nullptr) {
+		return;
+	}
+	script->m_fiberWait = 0;
 }
 
 static void ManagedScriptTick(int scriptIndex)
 {
-	GTA::ManagedGlobals::g_scripts[scriptIndex]->ProcessOneTick();
+	auto script = GTA::ManagedGlobals::g_scripts[scriptIndex];
+	if (script != nullptr) {
+		script->ProcessOneTick();
+	}
 	GTA::Native::Function::ClearStringPool();
 }
 
@@ -149,6 +201,9 @@ struct ScriptFiberInfo
 	int m_index;
 	void* m_fiberMain;
 	void* m_fiberScript;
+
+	bool m_initialized;
+	bool m_defect;
 };
 
 static HMODULE _instance;
@@ -157,8 +212,24 @@ static std::vector<ScriptFiberInfo> _scriptFibers;
 
 static void ScriptMainFiber(LPVOID pv)
 {
+	ScriptFiberInfo* fi = (ScriptFiberInfo*)pv;
+
 	while (true) {
-		ScriptFiberInfo* fi = (ScriptFiberInfo*)pv;
+		if (fi->m_defect) {
+			SwitchToFiber(fi->m_fiberMain);
+			continue;
+		}
+
+		if (!fi->m_initialized) {
+			if (ManagedScriptInit(fi->m_index, fi->m_fiberMain, fi->m_fiberScript)) {
+				fi->m_initialized = true;
+			} else {
+				fi->m_defect = true;
+			}
+			SwitchToFiber(fi->m_fiberMain);
+			continue;
+		}
+
 		ManagedScriptTick(fi->m_index);
 		SwitchToFiber(fi->m_fiberMain);
 	}
@@ -170,8 +241,10 @@ static void ScriptMain(int index)
 	fi.m_index = index;
 	fi.m_fiberMain = GetCurrentFiber();
 	fi.m_fiberScript = CreateFiber(0, ScriptMainFiber, (LPVOID)&fi);
+	fi.m_initialized = false;
+	fi.m_defect = false;
 
-	ManagedScriptInit(fi.m_index, fi.m_fiberMain, fi.m_fiberScript);
+	UnmanagedLogWrite("ScriptMain(%d) -> Initialized: %d, defect: %d\n", index, (int)fi.m_initialized, (int)fi.m_defect);
 
 	while (true) {
 		int ms = ManagedScriptGetWaitTime(fi.m_index);
@@ -263,10 +336,14 @@ static void ManagedInitialize()
 	System::AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(eventSink, &ManagedEventSink::OnAssemblyResolve);
 	System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(eventSink, &ManagedEventSink::OnUnhandledException);
 
-	GTA::ManagedGlobals::g_scripts = LoadAllScripts();
-	GTA::ManagedGlobals::g_logWriter->WriteLine("{0} scripts instantiated", GTA::ManagedGlobals::g_scripts->Length);
+	GTA::ManagedGlobals::g_scriptTypes = LoadAllTypes();
+	GTA::ManagedGlobals::g_scripts = gcnew array<GTA::Script^>(GTA::ManagedGlobals::g_scriptTypes->Length);
+	GTA::ManagedGlobals::g_logWriter->WriteLine("{0} script types found:", GTA::ManagedGlobals::g_scriptTypes->Length);
+	for (int i = 0; i < GTA::ManagedGlobals::g_scriptTypes->Length; i++) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("  {0}: {1}", i, GTA::ManagedGlobals::g_scriptTypes[i]->FullName);
+	}
 
-	for (int i = 0; i < GTA::ManagedGlobals::g_scripts->Length; i++) {
+	for (int i = 0; i < GTA::ManagedGlobals::g_scriptTypes->Length; i++) {
 		RegisterScriptMain(i);
 	}
 }

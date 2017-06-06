@@ -33,6 +33,10 @@ void GTA::Script::Yield()
 	Wait(0);
 }
 
+void GTA::Script::OnInit()
+{
+}
+
 void GTA::Script::OnTick()
 {
 }
@@ -59,7 +63,7 @@ GTA::Script^ GTA::Script::GetExecuting()
 	}
 
 	for each (auto script in GTA::ManagedGlobals::g_scripts) {
-		if (script->m_fiberCurrent == currentFiber) {
+		if (script != nullptr && script->m_fiberCurrent == currentFiber) {
 			return script;
 		}
 	}

@@ -8,7 +8,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{74B50C66-1EC4-4425-ADD9-4CAE2CAA8638}</ProjectGuid>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>GTA</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
@@ -81,6 +81,7 @@
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="core\Function.cpp" />
+    <ClCompile Include="core\GlobalVariable.cpp" />
     <ClCompile Include="core\Input.cpp" />
     <ClCompile Include="core\InputArgument.cpp" />
     <ClCompile Include="core\Main.cpp" />
@@ -90,6 +91,7 @@
     <ClCompile Include="core\Script.cpp" />
     <ClInclude Include="core\Config.h" />
     <ClInclude Include="core\Function.h" />
+    <ClInclude Include="core\GlobalVariable.h" />
     <ClInclude Include="core\INativeValue.h" />
     <ClInclude Include="core\Input.h" />
     <ClInclude Include="core\InputArgument.h" />
