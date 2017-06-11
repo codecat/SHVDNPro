@@ -16,5 +16,8 @@ namespace GTA
 	public:
 		void FindAllTypes();
 		bool ScriptInit(int scriptIndex, void* fiberMain, void* fiberScript);
+
+		void OnUnhandledException(System::Object^ sender, System::UnhandledExceptionEventArgs^ e);
+		System::Reflection::Assembly^ OnAssemblyResolve(System::Object^ sender, System::ResolveEventArgs^ args);
 	};
 }

@@ -5,7 +5,8 @@
 
 GTA::ScriptDomain::ScriptDomain()
 {
-	GTA::WriteLog("ScriptDomain ctor");
+	System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(this, &GTA::ScriptDomain::OnUnhandledException);
+	System::AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(this, &GTA::ScriptDomain::OnAssemblyResolve);
 }
 
 void GTA::ScriptDomain::FindAllTypes()
@@ -18,8 +19,6 @@ void GTA::ScriptDomain::FindAllTypes()
 	auto files = System::IO::Directory::GetFiles(curDir + "\\Scripts\\", "*.dll", System::IO::SearchOption::AllDirectories);
 
 	for each (auto file in files) {
-		GTA::WriteLog("Loading assembly {0}", file);
-
 		auto fileName = System::IO::Path::GetFileName(file);
 
 		System::Reflection::Assembly^ assembly = nullptr;
@@ -58,8 +57,6 @@ void GTA::ScriptDomain::FindAllTypes()
 			GTA::WriteLog("*** Unmanaged exception while iterating types");
 			continue;
 		}
-
-		GTA::WriteLog("Done iterating assembly");
 	}
 
 	if (ret->Count > 20) {
@@ -101,4 +98,19 @@ bool GTA::ScriptDomain::ScriptInit(int scriptIndex, void* fiberMain, void* fiber
 	script->OnInit();
 
 	return true;
+}
+
+void GTA::ScriptDomain::OnUnhandledException(System::Object^ sender, System::UnhandledExceptionEventArgs^ e)
+{
+	GTA::WriteLog("*** Unhandled exception: {0}", e->ExceptionObject->ToString());
+}
+
+System::Reflection::Assembly^ GTA::ScriptDomain::OnAssemblyResolve(System::Object^ sender, System::ResolveEventArgs^ args)
+{
+	auto exeAssembly = System::Reflection::Assembly::GetExecutingAssembly();
+	if (args->Name == exeAssembly->FullName) {
+		return exeAssembly;
+	}
+
+	return nullptr;
 }

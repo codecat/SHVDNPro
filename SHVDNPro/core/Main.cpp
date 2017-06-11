@@ -25,22 +25,10 @@
 ref class ManagedEventSink
 {
 public:
-	System::Reflection::Assembly^ OnAssemblyResolve(System::Object^ sender, System::ResolveEventArgs^ args)
-	{
-		auto exeAssembly = System::Reflection::Assembly::GetExecutingAssembly();
-		if (args->Name == exeAssembly->FullName) {
-			return exeAssembly;
-		}
-
-		return nullptr;
-	}
-
 	void OnUnhandledException(System::Object^ sender, System::UnhandledExceptionEventArgs^ args)
 	{
 		GTA::WriteLog("*** Unhandled exception: {0}", args->ExceptionObject->ToString());
 	}
-
-	static ManagedEventSink^ Instance;
 };
 
 void LoadScriptDomain()
@@ -49,8 +37,8 @@ void LoadScriptDomain()
 
 	auto setup = gcnew System::AppDomainSetup();
 	setup->ApplicationBase = System::IO::Path::GetFullPath(curDir + "\\Scripts");
-	setup->ShadowCopyFiles = "true"; // !?
-	setup->ShadowCopyDirectories = curDir;
+	setup->ShadowCopyFiles = "false"; // !?
+	setup->ShadowCopyDirectories = setup->ApplicationBase;
 
 	GTA::WriteLog("Creating AppDomain with base \"{0}\"", setup->ApplicationBase);
 
@@ -59,10 +47,6 @@ void LoadScriptDomain()
 
 	GTA::ManagedGlobals::g_appDomain = System::AppDomain::CreateDomain(appDomainName, nullptr, setup, appDomainPermissions);
 	GTA::ManagedGlobals::g_appDomain->InitializeLifetimeService();
-
-	//TODO: This crashes.. probably requires an instance created by the AppDomain
-	//GTA::ManagedGlobals::g_appDomain->AssemblyResolve += gcnew System::ResolveEventHandler(eventSink, &ManagedEventSink::OnAssemblyResolve);
-	//GTA::ManagedGlobals::g_appDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(eventSink, &ManagedEventSink::OnUnhandledException);
 
 	GTA::WriteLog("Created AppDomain \"{0}\"", GTA::ManagedGlobals::g_appDomain->FriendlyName);
 
@@ -270,9 +254,8 @@ static void ManagedInitialize()
 {
 	GTA::WriteLog("SHVDN Pro Initializing");
 
-	ManagedEventSink::Instance = gcnew ManagedEventSink();
-	System::AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(ManagedEventSink::Instance, &ManagedEventSink::OnAssemblyResolve);
-	System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(ManagedEventSink::Instance, &ManagedEventSink::OnUnhandledException);
+	auto eventSink = gcnew ManagedEventSink();
+	System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(eventSink, &ManagedEventSink::OnUnhandledException);
 }
 
 static void* _fiberControl;
