@@ -71,6 +71,9 @@
     <ClCompile Include="core\GlobalVariable.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\UnmanagedLog.cpp">
+      <Filter>core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Function.h">
@@ -125,6 +128,9 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\GlobalVariable.h">
+      <Filter>core</Filter>
+    </ClInclude>
+    <ClInclude Include="core\UnmanagedLog.h">
       <Filter>core</Filter>
     </ClInclude>
   </ItemGroup>

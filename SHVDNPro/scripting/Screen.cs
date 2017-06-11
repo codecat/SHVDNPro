@@ -117,6 +117,7 @@ namespace GTA.UI
 		{
 			get
 			{
+				//TODO: Optimize this by only returning a cached value retrieved at the beginning of each frame (NativeUI calls this for EVERY SINGLE THING IT DRAWS)
 				var width = new OutputArgument();
 				var height = new OutputArgument();
 				Function.Call(Hash._GET_SCREEN_ACTIVE_RESOLUTION, width, height);

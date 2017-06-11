@@ -18,6 +18,8 @@
 
 #include <ManagedGlobals.h>
 
+#include <UnmanagedLog.h>
+
 ref class ManagedEventSink
 {
 public:
@@ -179,23 +181,6 @@ static void ManagedInitialize();
 #include <Windows.h>
 #include <cstdarg>
 
-
-static void UnmanagedLogWrite(const char* format, ...)
-{
-	FILE* fh = fopen("SHVDNProUnmanaged.log", "ab");
-	if (fh == nullptr) {
-		return;
-	}
-
-	va_list va;
-	va_start(va, format);
-	vfprintf(fh, format, va);
-	va_end(va);
-
-	fclose(fh);
-}
-
-
 struct ScriptFiberInfo
 {
 	int m_index;
@@ -244,7 +229,7 @@ static void ScriptMain(int index)
 	fi.m_initialized = false;
 	fi.m_defect = false;
 
-	UnmanagedLogWrite("ScriptMain(%d) -> Initialized: %d, defect: %d\n", index, (int)fi.m_initialized, (int)fi.m_defect);
+	UnmanagedLogWrite("ScriptMain(%d) -> Initialized: %d, defect: %d (main: %p, script: %p)\n", index, (int)fi.m_initialized, (int)fi.m_defect, fi.m_fiberMain, fi.m_fiberScript);
 
 	while (true) {
 		int ms = ManagedScriptGetWaitTime(fi.m_index);

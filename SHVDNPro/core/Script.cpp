@@ -10,6 +10,8 @@
 #include <Windows.h>
 #undef Yield
 
+#include <UnmanagedLog.h>
+
 static void ScriptSwitchToMainFiber(void* fiber)
 {
 	SwitchToFiber(fiber);
@@ -24,6 +26,12 @@ GTA::Script::Script()
 
 void GTA::Script::Wait(int ms)
 {
+#ifdef THROW_ON_WRONG_FIBER_YIELD
+	if (GetCurrentFiber() != m_fiberCurrent) {
+		throw gcnew System::Exception(System::String::Format("Illegal fiber wait {0} from invalid thread:\n{1}", ms, System::Environment::StackTrace));
+	}
+#endif
+
 	m_fiberWait = ms;
 	ScriptSwitchToMainFiber(m_fiberMain);
 }
@@ -109,5 +117,7 @@ void GTA::Script::ProcessOneTick()
 		OnTick();
 	} catch (System::Exception^ ex) {
 		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnTick: {0}", ex->ToString());
+	} catch (...) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception during OnTick in {0}", GetType()->FullName);
 	}
 }

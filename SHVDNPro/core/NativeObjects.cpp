@@ -8,6 +8,8 @@
 #include <Vector2.hpp>
 #include <Vector3.hpp>
 
+#include <ManagedGlobals.h>
+
 #include <cstring>
 
 System::UInt64 EncodeObject(System::Object^ obj)
@@ -24,6 +26,15 @@ System::UInt64 EncodeObject(System::Object^ obj)
 
 	if (type == System::Boolean::typeid) {
 		return static_cast<bool>(obj) ? 1 : 0;
+
+	} else if (type == System::Byte::typeid) {
+		return static_cast<System::Byte>(obj);
+
+	} else if (type == System::Int16::typeid) {
+		return static_cast<System::Int16>(obj);
+
+	} else if (type == System::UInt16::typeid) {
+		return static_cast<System::UInt16>(obj);
 
 	} else if (type == System::Int32::typeid) {
 		return static_cast<System::Int32>(obj);
@@ -52,10 +63,11 @@ System::UInt64 EncodeObject(System::Object^ obj)
 	} else if (type == GTA::Native::OutputArgument::typeid) {
 		return System::IntPtr(static_cast<GTA::Native::OutputArgument^>(obj)->GetPointer()).ToInt64();
 
-	} else if (type == GTA::Native::INativeValue::typeid) {
+	} else if (GTA::Native::INativeValue::typeid->IsAssignableFrom(type)) {
 		return static_cast<GTA::Native::INativeValue^>(obj)->NativeValue;
 	}
 
+	GTA::ManagedGlobals::g_logWriter->WriteLine("*** Tried encoding unhandled type {0}:\n{1}", type->FullName, System::Environment::StackTrace);
 	return 0;
 }
 

@@ -777,6 +777,7 @@ namespace GTA
 		{
 			Input.PauseKeyboardEvents(true);
 
+			// int p0, char* windowTitle, char* p2, char* defaultText, char* defaultConcat1, char* defaultConcat2, char* defaultConcat3, int maxInputLength
 			Function.Call(Hash.DISPLAY_ONSCREEN_KEYBOARD, true, windowTitle.ToString(), string.Empty, defaultText, string.Empty, string.Empty, string.Empty, maxLength + 1);
 
 			while (Function.Call<int>(Hash.UPDATE_ONSCREEN_KEYBOARD) == 0)

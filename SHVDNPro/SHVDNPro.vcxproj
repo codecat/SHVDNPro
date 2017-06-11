@@ -59,7 +59,7 @@
       <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOSOUND;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <CsCompile>
       <Optimize>true</Optimize>
@@ -106,6 +106,7 @@
   <!-- Additional source files -->
   <ItemGroup>
     <ClCompile Include="core\Tasks\NativeTask.cpp" />
+    <ClCompile Include="core\UnmanagedLog.cpp" />
     <ClCompile Include="scripting\Matrix.cpp" />
     <ClCompile Include="scripting\Quaternion.cpp" />
     <ClCompile Include="scripting\Vector2.cpp" />
@@ -113,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Tasks\NativeTask.h" />
+    <ClInclude Include="core\UnmanagedLog.h" />
     <ClInclude Include="scripting\Matrix.hpp" />
     <ClInclude Include="scripting\Quaternion.hpp" />
     <ClInclude Include="scripting\Vector2.hpp" />

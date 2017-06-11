@@ -1,6 +1,7 @@
 ﻿using GTA;
 using GTA.Native;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -26,25 +27,7 @@ namespace ExampleScript
 
 		public override void OnTick()
 		{
-			Function.Call(Hash.DRAW_RECT, 0.0f, 0.0f, 0.1f, 0.1f, 255, 0, 0, 255);
-		}
-
-		public override void OnKeyDown(KeyEventArgs args)
-		{
-			if (args.KeyCode == Keys.J) {
-				m_log.WriteLine("You pressed J at {0}!", DateTime.Now);
-
-			} else if (args.KeyCode == Keys.K) {
-				m_log.WriteLine("You pressed K, you die!");
-				Game.PlayerPed.Kill();
-			}
-		}
-
-		public override void OnKeyUp(KeyEventArgs args)
-		{
-			if (args.KeyCode == Keys.J) {
-				m_log.WriteLine("You released J at {0}!", DateTime.Now);
-			}
+			Function.Call(Hash.DRAW_RECT, 0.1f, 0.0f, 0.1f, 0.1f, 255, 0, 0, 255);
 		}
 
 		public override void OnPresent(IntPtr swapchain)
