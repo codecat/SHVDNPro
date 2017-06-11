@@ -63,9 +63,10 @@ void LoadScriptDomain()
 		GTA::WriteLog("*** Failed to create ScriptDomain beacuse of unmanaged exception");
 		return;
 	}
-	GTA::ManagedGlobals::g_scriptDomain->FindAllTypes();
 
 	GTA::WriteLog("Created ScriptDomain!");
+
+	GTA::ManagedGlobals::g_scriptDomain->FindAllTypes();
 }
 
 static bool ManagedScriptInit(int scriptIndex, void* fiberMain, void* fiberScript)
@@ -73,31 +74,27 @@ static bool ManagedScriptInit(int scriptIndex, void* fiberMain, void* fiberScrip
 	return GTA::ManagedGlobals::g_scriptDomain->ScriptInit(scriptIndex, fiberMain, fiberScript);
 }
 
+static bool ManagedScriptExists(int scriptIndex)
+{
+	if (GTA::ManagedGlobals::g_scriptDomain == nullptr) {
+		return false;
+	}
+	return GTA::ManagedGlobals::g_scriptDomain->ScriptExists(scriptIndex);
+}
+
 static int ManagedScriptGetWaitTime(int scriptIndex)
 {
-	auto script = GTA::ManagedGlobals::g_scriptDomain->m_scripts[scriptIndex];
-	if (script == nullptr) {
-		return 0;
-	}
-	return script->m_fiberWait;
+	return GTA::ManagedGlobals::g_scriptDomain->ScriptGetWaitTime(scriptIndex);
 }
 
 static void ManagedScriptResetWaitTime(int scriptIndex)
 {
-	auto script = GTA::ManagedGlobals::g_scriptDomain->m_scripts[scriptIndex];
-	if (script == nullptr) {
-		return;
-	}
-	script->m_fiberWait = 0;
+	GTA::ManagedGlobals::g_scriptDomain->ScriptResetWaitTime(scriptIndex);
 }
 
 static void ManagedScriptTick(int scriptIndex)
 {
-	auto script = GTA::ManagedGlobals::g_scriptDomain->m_scripts[scriptIndex];
-	if (script != nullptr) {
-		script->ProcessOneTick();
-	}
-	GTA::Native::Function::ClearStringPool();
+	GTA::ManagedGlobals::g_scriptDomain->ScriptTick(scriptIndex);
 }
 
 static void ManagedD3DPresent(void* swapchain)
@@ -112,8 +109,6 @@ static void ManagedD3DPresent(void* swapchain)
 		}
 	}
 }
-
-static void ManagedInitialize();
 
 #pragma unmanaged
 #include <main.h>
@@ -169,6 +164,12 @@ static void ScriptMain(int index)
 	fi.m_defect = false;
 
 	UnmanagedLogWrite("ScriptMain(%d) -> Initialized: %d, defect: %d (main: %p, script: %p)\n", index, (int)fi.m_initialized, (int)fi.m_defect, fi.m_fiberMain, fi.m_fiberScript);
+
+	while (!ManagedScriptExists(fi.m_index)) {
+		scriptWait(0);
+	}
+
+	UnmanagedLogWrite("ScriptMain(%d) became active!\n", index);
 
 	while (true) {
 		int ms = ManagedScriptGetWaitTime(fi.m_index);
@@ -229,7 +230,7 @@ static void(*_scriptWrappers[])() = {
 	&ScriptMain_Wrapper20,
 };
 
-static void RegisterScriptMain(int index)
+void RegisterScriptMain(int index)
 {
 	if (index > 20) {
 		//TODO: Log some error?
@@ -267,15 +268,6 @@ static void ManagedSHVDNProControl()
 
 		LoadScriptDomain();
 
-		GTA::WriteLog("{0} script types found:", GTA::ManagedGlobals::g_scriptDomain->m_types->Length);
-		for (int i = 0; i < GTA::ManagedGlobals::g_scriptDomain->m_types->Length; i++) {
-			GTA::WriteLog("  {0}: {1}", i, GTA::ManagedGlobals::g_scriptDomain->m_types[i]->FullName);
-		}
-
-		for (int i = 0; i < GTA::ManagedGlobals::g_scriptDomain->m_types->Length; i++) {
-			RegisterScriptMain(i);
-		}
-
 		SwitchToFiber(_fiberControl);
 	}, nullptr);
 
@@ -294,6 +286,13 @@ static void SHVDNProControl()
 BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved)
 {
 	if (reason == DLL_PROCESS_ATTACH) {
+		if (GetEnvironmentVariableA("SHVDNPro", nullptr, 0) > 0) {
+			UnmanagedLogWrite("DllMain attach detected SHVDNPro already running");
+			return TRUE;
+		}
+
+		SetEnvironmentVariableA("SHVDNPro", "Melissa");
+
 		UnmanagedLogWrite("DllMain DLL_PROCESS_ATTACH\n");
 
 		DisableThreadLibraryCalls(hInstance);
@@ -301,10 +300,20 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved)
 
 		ManagedInitialize();
 		scriptRegister(hInstance, SHVDNProControl);
+		for (int i = 0; i < 21; i++) {
+			RegisterScriptMain(i);
+		}
 		keyboardHandlerRegister(&ScriptKeyboardMessage);
 		presentCallbackRegister(&DXGIPresent);
 
 	} else if (reason == DLL_PROCESS_DETACH) {
+		if (GetEnvironmentVariableA("SHVDNPro", nullptr, 0) == 0) {
+			UnmanagedLogWrite("DllMain detach detected SHVDNPro not running");
+			return TRUE;
+		}
+
+		SetEnvironmentVariableA("SHVDNPro", nullptr);
+
 		UnmanagedLogWrite("DllMain DLL_PROCESS_DETACH\n");
 
 		presentCallbackUnregister(&DXGIPresent);

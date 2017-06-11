@@ -28,7 +28,7 @@ static void LogNative(System::String^ type, GTA::Hash hash, array<System::Object
 
 static void LogNativeOK()
 {
-	GTA::WriteLog(" OK!");
+	//GTA::WriteLog(" OK!");
 }
 
 generic <typename T> T GTA::Native::Function::Call(GTA::Hash hash, ... array<System::Object^>^ arguments)

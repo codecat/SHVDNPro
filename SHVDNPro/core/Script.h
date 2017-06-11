@@ -2,7 +2,7 @@
 
 namespace GTA
 {
-	public ref class Script abstract : public System::MarshalByRefObject
+	public ref class Script abstract
 	{
 	internal:
 		void* m_fiberMain;

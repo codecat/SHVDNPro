@@ -64,20 +64,7 @@ void GTA::Script::OnKeyUp(System::Windows::Forms::KeyEventArgs^ args)
 
 GTA::Script^ GTA::Script::GetExecuting()
 {
-	void* currentFiber = GetCurrentFiber();
-
-	// I don't know if GetCurrentFiber ever returns null, but whatever
-	if (currentFiber == nullptr) {
-		return nullptr;
-	}
-
-	for each (auto script in GTA::ManagedGlobals::g_scriptDomain->m_scripts) {
-		if (script != nullptr && script->m_fiberCurrent == currentFiber) {
-			return script;
-		}
-	}
-
-	return nullptr;
+	return GTA::ManagedGlobals::g_scriptDomain->GetExecuting();
 }
 
 void GTA::Script::WaitExecuting(int ms)

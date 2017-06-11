@@ -1,6 +1,7 @@
 #include <Input.h>
 
 #include <ManagedGlobals.h>
+#include <Log.h>
 
 #include <Windows.h>
 
@@ -16,7 +17,7 @@ void ManagedScriptKeyboardMessage(unsigned long key, unsigned short repeats, uns
 
 	GTA::Input::_keyboardState[key] = status;
 
-	if (GTA::Input::_captureKeyboardEvents && GTA::ManagedGlobals::g_scriptDomain->m_scripts != nullptr) {
+	if (GTA::Input::_captureKeyboardEvents) {
 		auto wfkey = (System::Windows::Forms::Keys)key;
 		if (ctrl) {
 			wfkey = wfkey | System::Windows::Forms::Keys::Control;
@@ -31,12 +32,8 @@ void ManagedScriptKeyboardMessage(unsigned long key, unsigned short repeats, uns
 		auto args = gcnew System::Windows::Forms::KeyEventArgs(wfkey);
 		auto eventinfo = gcnew System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>(status, args);
 
-		for each (auto script in GTA::ManagedGlobals::g_scriptDomain->m_scripts) {
-			if (script == nullptr) {
-				continue;
-			}
-			script->m_keyboardEvents->Enqueue(eventinfo);
-		}
+		//TODO: This throws doesn't work because KeyEventArgs is not serializable (we need to pass it via AppDomain proxy)
+		//GTA::ManagedGlobals::g_scriptDomain->QueueKeyboardEvent(eventinfo);
 	}
 
 	//TODO: API for scancodes or WM_CHAR text input?

@@ -1,12 +1,20 @@
 #include <ScriptDomain.h>
 
+#include <Function.h>
+
 #include <ManagedGlobals.h>
 #include <Log.h>
+
+#pragma unmanaged
+#include <Windows.h>
+#pragma managed
 
 GTA::ScriptDomain::ScriptDomain()
 {
 	System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(this, &GTA::ScriptDomain::OnUnhandledException);
 	System::AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(this, &GTA::ScriptDomain::OnAssemblyResolve);
+
+	GTA::ManagedGlobals::g_scriptDomain = this;
 }
 
 void GTA::ScriptDomain::FindAllTypes()
@@ -65,6 +73,29 @@ void GTA::ScriptDomain::FindAllTypes()
 
 	m_types = ret->ToArray();
 	m_scripts = gcnew array<GTA::Script^>(m_types->Length);
+
+	GTA::WriteLog("{0} script types found:", m_types->Length);
+	for (int i = 0; i < m_types->Length; i++) {
+		GTA::WriteLog("  {0}: {1}", i, m_types[i]->FullName);
+	}
+}
+
+GTA::Script^ GTA::ScriptDomain::GetExecuting()
+{
+	void* currentFiber = GetCurrentFiber();
+
+	// I don't know if GetCurrentFiber ever returns null, but whatever
+	if (currentFiber == nullptr) {
+		return nullptr;
+	}
+
+	for each (auto script in m_scripts) {
+		if (script != nullptr && script->m_fiberCurrent == currentFiber) {
+			return script;
+		}
+	}
+
+	return nullptr;
 }
 
 bool GTA::ScriptDomain::ScriptInit(int scriptIndex, void* fiberMain, void* fiberScript)
@@ -98,6 +129,48 @@ bool GTA::ScriptDomain::ScriptInit(int scriptIndex, void* fiberMain, void* fiber
 	script->OnInit();
 
 	return true;
+}
+
+bool GTA::ScriptDomain::ScriptExists(int scriptIndex)
+{
+	return scriptIndex < m_types->Length;
+}
+
+int GTA::ScriptDomain::ScriptGetWaitTime(int scriptIndex)
+{
+	auto script = m_scripts[scriptIndex];
+	if (script == nullptr) {
+		return 0;
+	}
+	return script->m_fiberWait;
+}
+
+void GTA::ScriptDomain::ScriptResetWaitTime(int scriptIndex)
+{
+	auto script = m_scripts[scriptIndex];
+	if (script == nullptr) {
+		return;
+	}
+	script->m_fiberWait = 0;
+}
+
+void GTA::ScriptDomain::ScriptTick(int scriptIndex)
+{
+	auto script = m_scripts[scriptIndex];
+	if (script != nullptr) {
+		script->ProcessOneTick();
+	}
+	GTA::Native::Function::ClearStringPool();
+}
+
+void GTA::ScriptDomain::QueueKeyboardEvent(System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>^ ev)
+{
+	for each (auto script in m_scripts) {
+		if (script == nullptr) {
+			continue;
+		}
+		script->m_keyboardEvents->Enqueue(ev);
+	}
 }
 
 void GTA::ScriptDomain::OnUnhandledException(System::Object^ sender, System::UnhandledExceptionEventArgs^ e)
