@@ -70,7 +70,7 @@ GTA::Script^ GTA::Script::GetExecuting()
 		return nullptr;
 	}
 
-	for each (auto script in GTA::ManagedGlobals::g_scripts) {
+	for each (auto script in GTA::ManagedGlobals::g_scriptDomain->m_scripts) {
 		if (script != nullptr && script->m_fiberCurrent == currentFiber) {
 			return script;
 		}

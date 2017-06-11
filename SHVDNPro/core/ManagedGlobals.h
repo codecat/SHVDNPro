@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Script.h>
+#include <ScriptDomain.h>
 
 namespace GTA
 {
@@ -8,7 +9,7 @@ namespace GTA
 	{
 	public:
 		static System::IO::StreamWriter^ g_logWriter;
-		static array<System::Type^>^ g_scriptTypes;
-		static array<GTA::Script^>^ g_scripts;
+		static System::AppDomain^ g_appDomain;
+		static GTA::ScriptDomain^ g_scriptDomain;
 	};
 }

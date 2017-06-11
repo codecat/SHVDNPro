@@ -17,6 +17,7 @@
 #include <Vector3.hpp>
 
 #include <ManagedGlobals.h>
+#include <ScriptDomain.h>
 
 #include <UnmanagedLog.h>
 
@@ -37,106 +38,59 @@ public:
 	{
 		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unhandled exception: {0}", args->ExceptionObject->ToString());
 	}
+
+	static ManagedEventSink^ Instance;
 };
 
-array<System::Type^>^ LoadAllTypes()
+void LoadScriptDomain()
 {
-	auto ret = gcnew System::Collections::Generic::List<System::Type^>();
+	auto curDir = System::IO::Path::GetDirectoryName(System::Reflection::Assembly::GetExecutingAssembly()->Location);
 
-	auto curDir = System::Reflection::Assembly::GetExecutingAssembly()->Location;
-	curDir = System::IO::Path::GetDirectoryName(curDir);
-	auto files = System::IO::Directory::GetFiles(curDir + "\\Scripts\\", "*.dll", System::IO::SearchOption::AllDirectories);
+	auto setup = gcnew System::AppDomainSetup();
+	setup->ApplicationBase = System::IO::Path::GetFullPath(curDir + "\\Scripts");
+	setup->ShadowCopyFiles = "true"; // !?
+	setup->ShadowCopyDirectories = curDir;
 
-	//TODO: Load using AppDomain so we can unload (and shadowcopy) properly
+	GTA::ManagedGlobals::g_logWriter->WriteLine("Creating AppDomain with base \"{0}\"", setup->ApplicationBase);
 
-	for each (auto file in files) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("Loading assembly {0}", file);
+	auto appDomainName = "ScriptDomain_" + (curDir->GetHashCode() * System::Environment::TickCount).ToString("X");
+	auto appDomainPermissions = gcnew System::Security::PermissionSet(System::Security::Permissions::PermissionState::Unrestricted);
 
-		auto fileName = System::IO::Path::GetFileName(file);
+	GTA::ManagedGlobals::g_appDomain = System::AppDomain::CreateDomain(appDomainName, nullptr, setup, appDomainPermissions);
+	GTA::ManagedGlobals::g_appDomain->InitializeLifetimeService();
 
-		System::Reflection::Assembly^ assembly = nullptr;
-		try {
-			assembly = System::Reflection::Assembly::LoadFrom(file);
-		} catch (System::BadImageFormatException^) {
-			continue;
-		} catch (System::Exception^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Assembly load exception for {0}: {1}", fileName, ex->ToString());
-		} catch (...) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while loading assembly!");
+	//TODO: This crashes.. probably requires an instance created by the AppDomain
+	//GTA::ManagedGlobals::g_appDomain->AssemblyResolve += gcnew System::ResolveEventHandler(eventSink, &ManagedEventSink::OnAssemblyResolve);
+	//GTA::ManagedGlobals::g_appDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(eventSink, &ManagedEventSink::OnUnhandledException);
+
+	GTA::ManagedGlobals::g_logWriter->WriteLine("Created AppDomain \"{0}\"", GTA::ManagedGlobals::g_appDomain->FriendlyName);
+
+	auto typeScriptDomain = GTA::ScriptDomain::typeid;
+	try {
+		GTA::ManagedGlobals::g_scriptDomain = static_cast<GTA::ScriptDomain^>(GTA::ManagedGlobals::g_appDomain->CreateInstanceFromAndUnwrap(typeScriptDomain->Assembly->Location, typeScriptDomain->FullName));
+	} catch (System::Exception^ ex) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Failed to create ScriptDomain: {0}", ex->ToString());
+		if (ex->InnerException != nullptr) {
+			GTA::ManagedGlobals::g_logWriter->WriteLine("*** InnerException: {0}", ex->InnerException->ToString());
 		}
-
-		GTA::ManagedGlobals::g_logWriter->WriteLine("Loaded assembly {0}", assembly);
-
-		try {
-			for each (auto type in assembly->GetTypes()) {
-				if (!type->IsSubclassOf(GTA::Script::typeid)) {
-					continue;
-				}
-
-				ret->Add(type);
-
-				GTA::ManagedGlobals::g_logWriter->WriteLine("Registered type {0}", type->FullName);
-			}
-		} catch (System::Reflection::ReflectionTypeLoadException^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while iterating types: {0}", ex->ToString());
-			for each (auto loaderEx in ex->LoaderExceptions) {
-				GTA::ManagedGlobals::g_logWriter->WriteLine("***    {0}", loaderEx->ToString());
-			}
-			continue;
-		} catch (System::Exception^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while iterating types: {0}", ex->ToString());
-			continue;
-		} catch (...) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while iterating types");
-			continue;
-		}
-
-		GTA::ManagedGlobals::g_logWriter->WriteLine("Done iterating assembly");
+		return;
+	} catch (...) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Failed to create ScriptDomain beacuse of unmanaged exception");
+		return;
 	}
+	GTA::ManagedGlobals::g_scriptDomain->FindAllTypes();
 
-	if (ret->Count > 20) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** WARNING: We can't have more than 20 scripts, yet we have {0}!", ret->Count);
-	}
-
-	return ret->ToArray();
+	GTA::ManagedGlobals::g_logWriter->WriteLine("Created ScriptDomain!");
 }
 
 static bool ManagedScriptInit(int scriptIndex, void* fiberMain, void* fiberScript)
 {
-	auto scriptType = GTA::ManagedGlobals::g_scriptTypes[scriptIndex];
-
-	GTA::ManagedGlobals::g_logWriter->WriteLine("Instantiating {0}", scriptType->FullName);
-
-	GTA::Script^ script = nullptr;
-	try {
-		script = static_cast<GTA::Script^>(System::Activator::CreateInstance(scriptType));
-	} catch (System::Reflection::ReflectionTypeLoadException^ ex) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while instantiating script: {0}", ex->ToString());
-		for each (auto loaderEx in ex->LoaderExceptions) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("***    {0}", loaderEx->ToString());
-		}
-		return false;
-	} catch (System::Exception^ ex) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while instantiating script: {0}", ex->ToString());
-		return false;
-	} catch (...) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while instantiating script!");
-		return false;
-	}
-
-	GTA::ManagedGlobals::g_logWriter->WriteLine("Instantiated {0}", scriptType->FullName);
-
-	GTA::ManagedGlobals::g_scripts[scriptIndex] = script;
-	script->m_fiberMain = fiberMain;
-	script->m_fiberCurrent = fiberScript;
-	script->OnInit();
-
-	return true;
+	return GTA::ManagedGlobals::g_scriptDomain->ScriptInit(scriptIndex, fiberMain, fiberScript);
 }
 
 static int ManagedScriptGetWaitTime(int scriptIndex)
 {
-	auto script = GTA::ManagedGlobals::g_scripts[scriptIndex];
+	auto script = GTA::ManagedGlobals::g_scriptDomain->m_scripts[scriptIndex];
 	if (script == nullptr) {
 		return 0;
 	}
@@ -145,7 +99,7 @@ static int ManagedScriptGetWaitTime(int scriptIndex)
 
 static void ManagedScriptResetWaitTime(int scriptIndex)
 {
-	auto script = GTA::ManagedGlobals::g_scripts[scriptIndex];
+	auto script = GTA::ManagedGlobals::g_scriptDomain->m_scripts[scriptIndex];
 	if (script == nullptr) {
 		return;
 	}
@@ -154,7 +108,7 @@ static void ManagedScriptResetWaitTime(int scriptIndex)
 
 static void ManagedScriptTick(int scriptIndex)
 {
-	auto script = GTA::ManagedGlobals::g_scripts[scriptIndex];
+	auto script = GTA::ManagedGlobals::g_scriptDomain->m_scripts[scriptIndex];
 	if (script != nullptr) {
 		script->ProcessOneTick();
 	}
@@ -165,7 +119,7 @@ static void ManagedD3DPresent(void* swapchain)
 {
 	System::IntPtr ptrSwapchain(swapchain);
 
-	for each (auto script in GTA::ManagedGlobals::g_scripts) {
+	for each (auto script in GTA::ManagedGlobals::g_scriptDomain->m_scripts) {
 		try {
 			script->OnPresent(ptrSwapchain);
 		} catch (System::Exception^ ex) {
@@ -193,7 +147,7 @@ struct ScriptFiberInfo
 
 static HMODULE _instance;
 
-static std::vector<ScriptFiberInfo> _scriptFibers;
+static std::vector<ScriptFiberInfo> _scriptFibers; //TODO: Add stuff to this
 
 static void ScriptMainFiber(LPVOID pv)
 {
@@ -317,34 +271,60 @@ static void ManagedInitialize()
 	GTA::ManagedGlobals::g_logWriter->AutoFlush = true;
 	GTA::ManagedGlobals::g_logWriter->WriteLine("SHVDN Pro Initializing");
 
-	auto eventSink = gcnew ManagedEventSink();
-	System::AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(eventSink, &ManagedEventSink::OnAssemblyResolve);
-	System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(eventSink, &ManagedEventSink::OnUnhandledException);
+	ManagedEventSink::Instance = gcnew ManagedEventSink();
+	System::AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(ManagedEventSink::Instance, &ManagedEventSink::OnAssemblyResolve);
+	System::AppDomain::CurrentDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(ManagedEventSink::Instance, &ManagedEventSink::OnUnhandledException);
+}
 
-	GTA::ManagedGlobals::g_scriptTypes = LoadAllTypes();
-	GTA::ManagedGlobals::g_scripts = gcnew array<GTA::Script^>(GTA::ManagedGlobals::g_scriptTypes->Length);
-	GTA::ManagedGlobals::g_logWriter->WriteLine("{0} script types found:", GTA::ManagedGlobals::g_scriptTypes->Length);
-	for (int i = 0; i < GTA::ManagedGlobals::g_scriptTypes->Length; i++) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("  {0}: {1}", i, GTA::ManagedGlobals::g_scriptTypes[i]->FullName);
-	}
+static void* _fiberControl;
 
-	for (int i = 0; i < GTA::ManagedGlobals::g_scriptTypes->Length; i++) {
-		RegisterScriptMain(i);
-	}
+static void ManagedSHVDNProControl()
+{
+	void* fiber = CreateFiber(0, [](void*) {
+		GTA::ManagedGlobals::g_logWriter->WriteLine("Control thread initializing");
+
+		LoadScriptDomain();
+
+		GTA::ManagedGlobals::g_logWriter->WriteLine("{0} script types found:", GTA::ManagedGlobals::g_scriptDomain->m_types->Length);
+		for (int i = 0; i < GTA::ManagedGlobals::g_scriptDomain->m_types->Length; i++) {
+			GTA::ManagedGlobals::g_logWriter->WriteLine("  {0}: {1}", i, GTA::ManagedGlobals::g_scriptDomain->m_types[i]->FullName);
+		}
+
+		for (int i = 0; i < GTA::ManagedGlobals::g_scriptDomain->m_types->Length; i++) {
+			RegisterScriptMain(i);
+		}
+
+		SwitchToFiber(_fiberControl);
+	}, nullptr);
+
+	SwitchToFiber(fiber);
 }
 
 #pragma unmanaged
+static void SHVDNProControl()
+{
+	_fiberControl = GetCurrentFiber();
+
+	scriptWait(0);
+	ManagedSHVDNProControl();
+}
+
 BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved)
 {
 	if (reason == DLL_PROCESS_ATTACH) {
+		UnmanagedLogWrite("DllMain DLL_PROCESS_ATTACH\n");
+
 		DisableThreadLibraryCalls(hInstance);
 		_instance = hInstance;
 
 		ManagedInitialize();
+		scriptRegister(hInstance, SHVDNProControl);
 		keyboardHandlerRegister(&ScriptKeyboardMessage);
 		presentCallbackRegister(&DXGIPresent);
 
 	} else if (reason == DLL_PROCESS_DETACH) {
+		UnmanagedLogWrite("DllMain DLL_PROCESS_DETACH\n");
+
 		presentCallbackUnregister(&DXGIPresent);
 		keyboardHandlerUnregister(&ScriptKeyboardMessage);
 		scriptUnregister(hInstance);

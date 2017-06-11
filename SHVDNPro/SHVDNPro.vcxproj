@@ -105,6 +105,7 @@
   </ItemGroup>
   <!-- Additional source files -->
   <ItemGroup>
+    <ClCompile Include="core\ScriptDomain.cpp" />
     <ClCompile Include="core\Tasks\NativeTask.cpp" />
     <ClCompile Include="core\UnmanagedLog.cpp" />
     <ClCompile Include="scripting\Matrix.cpp" />
@@ -113,6 +114,7 @@
     <ClCompile Include="scripting\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="core\ScriptDomain.h" />
     <ClInclude Include="core\Tasks\NativeTask.h" />
     <ClInclude Include="core\UnmanagedLog.h" />
     <ClInclude Include="scripting\Matrix.hpp" />
