@@ -2,6 +2,7 @@
 
 #include <NativeObjects.h>
 #include <ManagedGlobals.h>
+#include <Log.h>
 
 #include <Config.h>
 
@@ -15,15 +16,19 @@
 
 static void LogNative(System::String^ type, GTA::Hash hash, array<System::Object^>^ args)
 {
+	/*
 	GTA::ManagedGlobals::g_logWriter->Write("{0:HH\\:mm\\:ss\\.fff} Native {1} {2:X16} {3}", System::DateTime::Now, type, (System::UInt64)hash, hash);
 	for each (auto arg in args) {
 		GTA::ManagedGlobals::g_logWriter->Write(", \"{0}\" ({1})", arg, arg->GetType()->FullName);
 	}
+	*/
+	//TODO
+	GTA::WriteLog("LogNative not implemented atm.. pls fix");
 }
 
 static void LogNativeOK()
 {
-	GTA::ManagedGlobals::g_logWriter->WriteLine(" OK!");
+	GTA::WriteLog(" OK!");
 }
 
 generic <typename T> T GTA::Native::Function::Call(GTA::Hash hash, ... array<System::Object^>^ arguments)

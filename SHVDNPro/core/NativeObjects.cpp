@@ -9,6 +9,7 @@
 #include <Vector3.hpp>
 
 #include <ManagedGlobals.h>
+#include <Log.h>
 
 #include <cstring>
 
@@ -67,7 +68,7 @@ System::UInt64 EncodeObject(System::Object^ obj)
 		return static_cast<GTA::Native::INativeValue^>(obj)->NativeValue;
 	}
 
-	GTA::ManagedGlobals::g_logWriter->WriteLine("*** Tried encoding unhandled type {0}:\n{1}", type->FullName, System::Environment::StackTrace);
+	GTA::WriteLog("*** Tried encoding unhandled type {0}:\n{1}", type->FullName, System::Environment::StackTrace);
 	return 0;
 }
 

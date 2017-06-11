@@ -3,6 +3,7 @@
 #include <Script.h>
 
 #include <ManagedGlobals.h>
+#include <Log.h>
 
 #include <Config.h>
 
@@ -106,9 +107,9 @@ void GTA::Script::ProcessOneTick()
 			}
 		} catch (System::Exception^ ex) {
 			if (ev->Item1) {
-				GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnKeyDown: {0}", ex->ToString());
+				GTA::WriteLog("*** Exception during OnKeyDown: {0}", ex->ToString());
 			} else {
-				GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnKeyUp: {0}", ex->ToString());
+				GTA::WriteLog("*** Exception during OnKeyUp: {0}", ex->ToString());
 			}
 		}
 	}
@@ -116,8 +117,8 @@ void GTA::Script::ProcessOneTick()
 	try {
 		OnTick();
 	} catch (System::Exception^ ex) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnTick: {0}", ex->ToString());
+		GTA::WriteLog("*** Exception during OnTick: {0}", ex->ToString());
 	} catch (...) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception during OnTick in {0}", GetType()->FullName);
+		GTA::WriteLog("*** Unmanaged exception during OnTick in {0}", GetType()->FullName);
 	}
 }

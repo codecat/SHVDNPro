@@ -18,6 +18,7 @@
 
 #include <ManagedGlobals.h>
 #include <ScriptDomain.h>
+#include <Log.h>
 
 #include <UnmanagedLog.h>
 
@@ -36,7 +37,7 @@ public:
 
 	void OnUnhandledException(System::Object^ sender, System::UnhandledExceptionEventArgs^ args)
 	{
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unhandled exception: {0}", args->ExceptionObject->ToString());
+		GTA::WriteLog("*** Unhandled exception: {0}", args->ExceptionObject->ToString());
 	}
 
 	static ManagedEventSink^ Instance;
@@ -51,7 +52,7 @@ void LoadScriptDomain()
 	setup->ShadowCopyFiles = "true"; // !?
 	setup->ShadowCopyDirectories = curDir;
 
-	GTA::ManagedGlobals::g_logWriter->WriteLine("Creating AppDomain with base \"{0}\"", setup->ApplicationBase);
+	GTA::WriteLog("Creating AppDomain with base \"{0}\"", setup->ApplicationBase);
 
 	auto appDomainName = "ScriptDomain_" + (curDir->GetHashCode() * System::Environment::TickCount).ToString("X");
 	auto appDomainPermissions = gcnew System::Security::PermissionSet(System::Security::Permissions::PermissionState::Unrestricted);
@@ -63,24 +64,24 @@ void LoadScriptDomain()
 	//GTA::ManagedGlobals::g_appDomain->AssemblyResolve += gcnew System::ResolveEventHandler(eventSink, &ManagedEventSink::OnAssemblyResolve);
 	//GTA::ManagedGlobals::g_appDomain->UnhandledException += gcnew System::UnhandledExceptionEventHandler(eventSink, &ManagedEventSink::OnUnhandledException);
 
-	GTA::ManagedGlobals::g_logWriter->WriteLine("Created AppDomain \"{0}\"", GTA::ManagedGlobals::g_appDomain->FriendlyName);
+	GTA::WriteLog("Created AppDomain \"{0}\"", GTA::ManagedGlobals::g_appDomain->FriendlyName);
 
 	auto typeScriptDomain = GTA::ScriptDomain::typeid;
 	try {
 		GTA::ManagedGlobals::g_scriptDomain = static_cast<GTA::ScriptDomain^>(GTA::ManagedGlobals::g_appDomain->CreateInstanceFromAndUnwrap(typeScriptDomain->Assembly->Location, typeScriptDomain->FullName));
 	} catch (System::Exception^ ex) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Failed to create ScriptDomain: {0}", ex->ToString());
+		GTA::WriteLog("*** Failed to create ScriptDomain: {0}", ex->ToString());
 		if (ex->InnerException != nullptr) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** InnerException: {0}", ex->InnerException->ToString());
+			GTA::WriteLog("*** InnerException: {0}", ex->InnerException->ToString());
 		}
 		return;
 	} catch (...) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Failed to create ScriptDomain beacuse of unmanaged exception");
+		GTA::WriteLog("*** Failed to create ScriptDomain beacuse of unmanaged exception");
 		return;
 	}
 	GTA::ManagedGlobals::g_scriptDomain->FindAllTypes();
 
-	GTA::ManagedGlobals::g_logWriter->WriteLine("Created ScriptDomain!");
+	GTA::WriteLog("Created ScriptDomain!");
 }
 
 static bool ManagedScriptInit(int scriptIndex, void* fiberMain, void* fiberScript)
@@ -123,7 +124,7 @@ static void ManagedD3DPresent(void* swapchain)
 		try {
 			script->OnPresent(ptrSwapchain);
 		} catch (System::Exception^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception during OnPresent: {0}", ex->ToString());
+			GTA::WriteLog("*** Exception during OnPresent: {0}", ex->ToString());
 		}
 	}
 }
@@ -267,9 +268,7 @@ static void DXGIPresent(void* swapChain)
 
 static void ManagedInitialize()
 {
-	GTA::ManagedGlobals::g_logWriter = gcnew System::IO::StreamWriter("SHVDNPro.log", true);
-	GTA::ManagedGlobals::g_logWriter->AutoFlush = true;
-	GTA::ManagedGlobals::g_logWriter->WriteLine("SHVDN Pro Initializing");
+	GTA::WriteLog("SHVDN Pro Initializing");
 
 	ManagedEventSink::Instance = gcnew ManagedEventSink();
 	System::AppDomain::CurrentDomain->AssemblyResolve += gcnew System::ResolveEventHandler(ManagedEventSink::Instance, &ManagedEventSink::OnAssemblyResolve);
@@ -281,13 +280,13 @@ static void* _fiberControl;
 static void ManagedSHVDNProControl()
 {
 	void* fiber = CreateFiber(0, [](void*) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("Control thread initializing");
+		GTA::WriteLog("Control thread initializing");
 
 		LoadScriptDomain();
 
-		GTA::ManagedGlobals::g_logWriter->WriteLine("{0} script types found:", GTA::ManagedGlobals::g_scriptDomain->m_types->Length);
+		GTA::WriteLog("{0} script types found:", GTA::ManagedGlobals::g_scriptDomain->m_types->Length);
 		for (int i = 0; i < GTA::ManagedGlobals::g_scriptDomain->m_types->Length; i++) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("  {0}: {1}", i, GTA::ManagedGlobals::g_scriptDomain->m_types[i]->FullName);
+			GTA::WriteLog("  {0}: {1}", i, GTA::ManagedGlobals::g_scriptDomain->m_types[i]->FullName);
 		}
 
 		for (int i = 0; i < GTA::ManagedGlobals::g_scriptDomain->m_types->Length; i++) {

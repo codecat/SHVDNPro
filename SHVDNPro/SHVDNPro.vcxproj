@@ -84,6 +84,7 @@
     <ClCompile Include="core\GlobalVariable.cpp" />
     <ClCompile Include="core\Input.cpp" />
     <ClCompile Include="core\InputArgument.cpp" />
+    <ClCompile Include="core\Log.cpp" />
     <ClCompile Include="core\Main.cpp" />
     <ClCompile Include="core\MemoryAccess.cpp" />
     <ClCompile Include="core\NativeObjects.cpp" />
@@ -96,6 +97,7 @@
     <ClInclude Include="core\Input.h" />
     <ClInclude Include="core\InputArgument.h" />
     <ClInclude Include="core\IScriptTask.h" />
+    <ClInclude Include="core\Log.h" />
     <ClInclude Include="core\ManagedGlobals.h" />
     <ClInclude Include="core\MemoryAccess.h" />
     <ClInclude Include="core\NativeHashes.h" />

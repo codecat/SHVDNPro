@@ -1,10 +1,11 @@
 #include <ScriptDomain.h>
 
 #include <ManagedGlobals.h>
+#include <Log.h>
 
 GTA::ScriptDomain::ScriptDomain()
 {
-	GTA::ManagedGlobals::g_logWriter->WriteLine("ScriptDomain created.");
+	GTA::WriteLog("ScriptDomain ctor");
 }
 
 void GTA::ScriptDomain::FindAllTypes()
@@ -17,7 +18,7 @@ void GTA::ScriptDomain::FindAllTypes()
 	auto files = System::IO::Directory::GetFiles(curDir + "\\Scripts\\", "*.dll", System::IO::SearchOption::AllDirectories);
 
 	for each (auto file in files) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("Loading assembly {0}", file);
+		GTA::WriteLog("Loading assembly {0}", file);
 
 		auto fileName = System::IO::Path::GetFileName(file);
 
@@ -27,12 +28,12 @@ void GTA::ScriptDomain::FindAllTypes()
 		} catch (System::BadImageFormatException^) {
 			continue;
 		} catch (System::Exception^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Assembly load exception for {0}: {1}", fileName, ex->ToString());
+			GTA::WriteLog("*** Assembly load exception for {0}: {1}", fileName, ex->ToString());
 		} catch (...) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while loading assembly!");
+			GTA::WriteLog("*** Unmanaged exception while loading assembly!");
 		}
 
-		GTA::ManagedGlobals::g_logWriter->WriteLine("Loaded assembly {0}", assembly);
+		GTA::WriteLog("Loaded assembly {0}", assembly);
 
 		try {
 			for each (auto type in assembly->GetTypes()) {
@@ -42,27 +43,27 @@ void GTA::ScriptDomain::FindAllTypes()
 
 				ret->Add(type);
 
-				GTA::ManagedGlobals::g_logWriter->WriteLine("Registered type {0}", type->FullName);
+				GTA::WriteLog("Registered type {0}", type->FullName);
 			}
 		} catch (System::Reflection::ReflectionTypeLoadException^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while iterating types: {0}", ex->ToString());
+			GTA::WriteLog("*** Exception while iterating types: {0}", ex->ToString());
 			for each (auto loaderEx in ex->LoaderExceptions) {
-				GTA::ManagedGlobals::g_logWriter->WriteLine("***    {0}", loaderEx->ToString());
+				GTA::WriteLog("***    {0}", loaderEx->ToString());
 			}
 			continue;
 		} catch (System::Exception^ ex) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while iterating types: {0}", ex->ToString());
+			GTA::WriteLog("*** Exception while iterating types: {0}", ex->ToString());
 			continue;
 		} catch (...) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while iterating types");
+			GTA::WriteLog("*** Unmanaged exception while iterating types");
 			continue;
 		}
 
-		GTA::ManagedGlobals::g_logWriter->WriteLine("Done iterating assembly");
+		GTA::WriteLog("Done iterating assembly");
 	}
 
 	if (ret->Count > 20) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** WARNING: We can't have more than 20 scripts, yet we have {0}!", ret->Count);
+		GTA::WriteLog("*** WARNING: We can't have more than 20 scripts, yet we have {0}!", ret->Count);
 	}
 
 	m_types = ret->ToArray();
@@ -73,26 +74,26 @@ bool GTA::ScriptDomain::ScriptInit(int scriptIndex, void* fiberMain, void* fiber
 {
 	auto scriptType = m_types[scriptIndex];
 
-	GTA::ManagedGlobals::g_logWriter->WriteLine("Instantiating {0}", scriptType->FullName);
+	GTA::WriteLog("Instantiating {0}", scriptType->FullName);
 
 	GTA::Script^ script = nullptr;
 	try {
 		script = static_cast<GTA::Script^>(System::Activator::CreateInstance(scriptType));
 	} catch (System::Reflection::ReflectionTypeLoadException^ ex) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while instantiating script: {0}", ex->ToString());
+		GTA::WriteLog("*** Exception while instantiating script: {0}", ex->ToString());
 		for each (auto loaderEx in ex->LoaderExceptions) {
-			GTA::ManagedGlobals::g_logWriter->WriteLine("***    {0}", loaderEx->ToString());
+			GTA::WriteLog("***    {0}", loaderEx->ToString());
 		}
 		return false;
 	} catch (System::Exception^ ex) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Exception while instantiating script: {0}", ex->ToString());
+		GTA::WriteLog("*** Exception while instantiating script: {0}", ex->ToString());
 		return false;
 	} catch (...) {
-		GTA::ManagedGlobals::g_logWriter->WriteLine("*** Unmanaged exception while instantiating script!");
+		GTA::WriteLog("*** Unmanaged exception while instantiating script!");
 		return false;
 	}
 
-	GTA::ManagedGlobals::g_logWriter->WriteLine("Instantiated {0}", scriptType->FullName);
+	GTA::WriteLog("Instantiated {0}", scriptType->FullName);
 
 	m_scripts[scriptIndex] = script;
 	script->m_fiberMain = fiberMain;
