@@ -15,7 +15,7 @@ The fork was created for the [Grand Theft Multiplayer](https://gt-mp.net/) mod w
 
 You'll need Visual Studio 2017 or higher to open the project file and the [Script Hook V SDK](http://www.dev-c.com/gtav/scripthookv/) extracted into "[/SDK](/SDK)".
 
-To contribute, please contact GT-MP's Miss. This project is currently a non-public GT-MP project.
+Feel free to send a pull request. I'm not sure I will be able to contribute a lot more to this project, as I've stopped being active in the community.
 
 ## License
 
