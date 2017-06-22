@@ -3,7 +3,7 @@ Script Hook V .NET Pro
 
 This is a fork of Crosire's [ScriptHookVDotNet](https://github.com/crosire/scripthookvdotnet). The core has been rewritten to work with multiple real SHV script functions instead of only 1. The benefit of this is that you get a major performance boost due to the fact that we don't need to start our own threads and queue up natives on the main script thread, we can just call natives directly.
 
-The fork was created for the [Grand Theft Multiplayer](https://gt-mp.net/) mod with the aim to boost performance.
+The fork was created for the [Grand Theft Multiplayer](https://gt-mp.net/) mod with the aim to boost performance, but later repurposed as an open source library.
 
 ## Requirements
 
