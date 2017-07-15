@@ -83,14 +83,14 @@ void GTA::Script::YieldExecuting()
 
 void GTA::Script::ProcessOneTick()
 {
-	System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>^ ev = nullptr;
+	System::Tuple<bool, System::Windows::Forms::Keys>^ ev = nullptr;
 
 	while (m_keyboardEvents->TryDequeue(ev)) {
 		try {
 			if (ev->Item1) {
-				OnKeyDown(ev->Item2);
+				OnKeyDown(gcnew System::Windows::Forms::KeyEventArgs(ev->Item2));
 			} else {
-				OnKeyUp(ev->Item2);
+				OnKeyUp(gcnew System::Windows::Forms::KeyEventArgs(ev->Item2));
 			}
 		} catch (System::Exception^ ex) {
 			if (ev->Item1) {

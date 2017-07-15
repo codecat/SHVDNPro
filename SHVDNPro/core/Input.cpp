@@ -29,11 +29,11 @@ void ManagedScriptKeyboardMessage(unsigned long key, unsigned short repeats, uns
 			wfkey = wfkey | System::Windows::Forms::Keys::Alt;
 		}
 
-		auto args = gcnew System::Windows::Forms::KeyEventArgs(wfkey);
-		auto eventinfo = gcnew System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>(status, args);
+		//auto args = gcnew System::Windows::Forms::KeyEventArgs(wfkey);
+		auto eventinfo = gcnew System::Tuple<bool, System::Windows::Forms::Keys>(status, wfkey);
 
 		//TODO: This throws doesn't work because KeyEventArgs is not serializable (we need to pass it via AppDomain proxy)
-		//GTA::ManagedGlobals::g_scriptDomain->QueueKeyboardEvent(eventinfo);
+		GTA::ManagedGlobals::g_scriptDomain->QueueKeyboardEvent(eventinfo);
 	}
 
 	//TODO: API for scancodes or WM_CHAR text input?

@@ -163,7 +163,7 @@ void GTA::ScriptDomain::ScriptTick(int scriptIndex)
 	GTA::Native::Function::ClearStringPool();
 }
 
-void GTA::ScriptDomain::QueueKeyboardEvent(System::Tuple<bool, System::Windows::Forms::KeyEventArgs^>^ ev)
+void GTA::ScriptDomain::QueueKeyboardEvent(System::Tuple<bool, System::Windows::Forms::Keys>^ ev)
 {
 	for each (auto script in m_scripts) {
 		if (script == nullptr) {
