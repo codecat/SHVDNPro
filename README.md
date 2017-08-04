@@ -17,6 +17,10 @@ You'll need Visual Studio 2017 or higher to open the project file and the [Scrip
 
 Feel free to send a pull request. I'm not sure I will be able to contribute a lot more to this project, as I've stopped being active in the community.
 
+## Support me
+
+Want to donate? Send me some bitcoins! `17GbWEg4sNvuXzBPqHriscEqg6wW9h1Gak`
+
 ## License
 
 All the source code except for the Vector, Matrix and Quaternion classes, which are licensed separately, is licensed under the conditions of the [zlib license](LICENSE.txt).
