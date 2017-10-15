@@ -2,7 +2,6 @@
 
 #include <NativeObjects.h>
 
-/*
 GTA::Native::InputArgument::InputArgument(System::Object^ value)
 {
 	_data = EncodeObject(value);
@@ -105,4 +104,8 @@ GTA::Native::InputArgument::operator InputArgument ^ (float *value)
 {
 	return gcnew InputArgument(System::IntPtr(value));
 }
-*/
+
+GTA::Native::InputArgument::operator InputArgument ^ (void *value)
+{
+	return gcnew InputArgument(System::IntPtr(value));
+}

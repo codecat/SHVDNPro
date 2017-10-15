@@ -2,8 +2,8 @@
 
 #include <NativeObjects.h>
 
-#include <Vector2.hpp>
-#include <Vector3.hpp>
+#include <Math/Vector2.hpp>
+#include <Math/Vector3.hpp>
 
 #pragma unmanaged
 #include <main.h>

@@ -19,7 +19,7 @@ namespace GTA
 		protected:
 			!OutputArgument();
 
-			unsigned char *_storage;
+			void *_storage;
 		};
 	}
 }

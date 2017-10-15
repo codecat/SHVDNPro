@@ -3,10 +3,11 @@
 #include <NativeObjects.h>
 
 #include <cstring>
+#include <cstdlib>
 
 GTA::Native::OutputArgument::OutputArgument()
 {
-	_storage = new unsigned char[24];
+	_storage = malloc(24);
 	memset(_storage, 0, 24);
 }
 
@@ -32,5 +33,5 @@ void* GTA::Native::OutputArgument::GetPointer()
 
 GTA::Native::OutputArgument::!OutputArgument()
 {
-	delete[] _storage;
+	free(_storage);
 }

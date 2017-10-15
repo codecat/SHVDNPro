@@ -14,7 +14,7 @@
 #include <main.h>
 #pragma managed
 
-static void LogNative(System::String^ type, GTA::Hash hash, array<System::Object^>^ args)
+static void LogNative(System::String^ type, GTA::Native::Hash hash, array<GTA::Native::InputArgument^>^ args)
 {
 	/*
 	GTA::ManagedGlobals::g_logWriter->Write("{0:HH\\:mm\\:ss\\.fff} Native {1} {2:X16} {3}", System::DateTime::Now, type, (System::UInt64)hash, hash);
@@ -31,7 +31,7 @@ static void LogNativeOK()
 	//GTA::WriteLog(" OK!");
 }
 
-generic <typename T> T GTA::Native::Function::Call(GTA::Hash hash, ... array<System::Object^>^ arguments)
+generic <typename T> T GTA::Native::Function::Call(GTA::Native::Hash hash, ... array<InputArgument^>^ arguments)
 {
 	//TODO: If calling outside of the executing fiber, queue a NativeTask to an SVHDN control thread
 
@@ -46,8 +46,8 @@ generic <typename T> T GTA::Native::Function::Call(GTA::Hash hash, ... array<Sys
 #endif
 
 	nativeInit((UINT64)hash);
-	for each (auto arg in arguments) {
-		nativePush64(EncodeObject(arg));
+	for each (InputArgument^ arg in arguments) {
+		nativePush64(arg->_data);
 	}
 	auto ret = static_cast<T>(DecodeObject(T::typeid, nativeCall()));
 
@@ -58,7 +58,7 @@ generic <typename T> T GTA::Native::Function::Call(GTA::Hash hash, ... array<Sys
 	return ret;
 }
 
-void GTA::Native::Function::Call(GTA::Hash hash, ... array<System::Object^>^ arguments)
+void GTA::Native::Function::Call(GTA::Native::Hash hash, ... array<InputArgument^>^ arguments)
 {
 #ifdef THROW_ON_MULTITHREADED_NATIVES
 	if (GTA::Script::GetExecuting() == nullptr) {

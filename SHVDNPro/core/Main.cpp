@@ -4,17 +4,16 @@
 #include <Function.h>
 #include <Input.h>
 
-#include <MemoryAccess.h>
 #include <GlobalVariable.h>
 #include <NativeObjects.h>
 #include <NativeHashes.h>
 #include <INativeValue.h>
 #include <OutputArgument.h>
 
-#include <Matrix.hpp>
-#include <Quaternion.hpp>
-#include <Vector2.hpp>
-#include <Vector3.hpp>
+#include <Math/Matrix.hpp>
+#include <Math/Quaternion.hpp>
+#include <Math/Vector2.hpp>
+#include <Math/Vector3.hpp>
 
 #include <ManagedGlobals.h>
 #include <ScriptDomain.h>

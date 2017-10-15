@@ -2,7 +2,6 @@
 
 #include <INativeValue.h>
 
-/*
 namespace GTA
 {
 	namespace Native
@@ -37,10 +36,10 @@ namespace GTA
 			static operator InputArgument ^ (int *value);
 			static operator InputArgument ^ (unsigned int *value);
 			static operator InputArgument ^ (float *value);
+			static operator InputArgument ^ (void *value);
 
 		internal:
 			System::UInt64 _data;
 		};
 	}
 }
-*/

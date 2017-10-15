@@ -5,26 +5,11 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="scripting">
-      <UniqueIdentifier>{c2fa4077-82a8-4e98-8d79-f3cb31f749c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scripting\Game">
-      <UniqueIdentifier>{b21c5ac4-8f05-4580-be17-a56b28e7bf45}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scripting\Math">
-      <UniqueIdentifier>{86708e6e-957e-4651-b280-f4c2dad1cda7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scripting\NaturalMotion">
-      <UniqueIdentifier>{f8dd24fb-a40a-4064-b869-c7f7f89fa7d9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scripting\UI">
-      <UniqueIdentifier>{c73dbab4-ce3e-4614-9a40-e11b5d0fb879}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="scripting\World">
-      <UniqueIdentifier>{731f929c-1e7f-451e-a7f6-2f64209e5e67}</UniqueIdentifier>
-    </Filter>
     <Filter Include="core\Tasks">
       <UniqueIdentifier>{17bdd362-6b4e-4f1d-8916-defa97b866c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="core\Math">
+      <UniqueIdentifier>{67b5e5ae-5c15-40d3-bd43-dae2bf9c754f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -38,21 +23,6 @@
       <Filter>core</Filter>
     </ClCompile>
     <ClCompile Include="AssemblyInfo.cpp" />
-    <ClCompile Include="scripting\Matrix.cpp">
-      <Filter>scripting\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="scripting\Quaternion.cpp">
-      <Filter>scripting\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="scripting\Vector2.cpp">
-      <Filter>scripting\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="scripting\Vector3.cpp">
-      <Filter>scripting\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="core\MemoryAccess.cpp">
-      <Filter>core</Filter>
-    </ClCompile>
     <ClCompile Include="core\OutputArgument.cpp">
       <Filter>core</Filter>
     </ClCompile>
@@ -80,6 +50,18 @@
     <ClCompile Include="core\Log.cpp">
       <Filter>core</Filter>
     </ClCompile>
+    <ClCompile Include="core\Math\Matrix.cpp">
+      <Filter>core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Math\Quaternion.cpp">
+      <Filter>core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Math\Vector2.cpp">
+      <Filter>core\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="core\Math\Vector3.cpp">
+      <Filter>core\Math</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\Function.h">
@@ -92,21 +74,6 @@
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\Script.h">
-      <Filter>core</Filter>
-    </ClInclude>
-    <ClInclude Include="scripting\Matrix.hpp">
-      <Filter>scripting\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="scripting\Quaternion.hpp">
-      <Filter>scripting\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="scripting\Vector2.hpp">
-      <Filter>scripting\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="scripting\Vector3.hpp">
-      <Filter>scripting\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="core\MemoryAccess.h">
       <Filter>core</Filter>
     </ClInclude>
     <ClInclude Include="core\OutputArgument.h">
@@ -145,151 +112,17 @@
     <ClInclude Include="core\Log.h">
       <Filter>core</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <CsCompile Include="scripting\Audio.cs">
-      <Filter>scripting\Game</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\ButtonCombination.cs">
-      <Filter>scripting\Game</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Controls.cs">
-      <Filter>scripting\Game</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Game.cs">
-      <Filter>scripting\Game</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\RadioStation.cs">
-      <Filter>scripting\Game</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Euphoria.cs">
-      <Filter>scripting\NaturalMotion</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\EuphoriaBase.cs">
-      <Filter>scripting\NaturalMotion</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\EuphoriaHelpers.cs">
-      <Filter>scripting\NaturalMotion</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Element.cs">
-      <Filter>scripting\UI</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Font.cs">
-      <Filter>scripting\UI</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Scaleform.cs">
-      <Filter>scripting\UI</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Screen.cs">
-      <Filter>scripting\UI</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Sprite.cs">
-      <Filter>scripting\UI</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Text.cs">
-      <Filter>scripting\UI</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Blip.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Bone.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Camera.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Checkpoint.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Entity.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Interfaces.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Model.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Ped.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\PedGroup.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\PedHash.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Pickup.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Player.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Prop.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Raycast.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Relationship.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\RelationshipGroup.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Rope.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Tasks.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Vehicle.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleDoor.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleDoorCollection.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleHash.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleMod.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleModCollection.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleToggleMod.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleWheel.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleWheelCollection.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleWindow.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\VehicleWindowCollection.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\Weapon.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\WeaponAsset.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\WeaponCollection.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\WeaponHash.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
-    <CsCompile Include="scripting\World.cs">
-      <Filter>scripting\World</Filter>
-    </CsCompile>
+    <ClInclude Include="core\Math\Matrix.hpp">
+      <Filter>core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Math\Quaternion.hpp">
+      <Filter>core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Math\Vector2.hpp">
+      <Filter>core\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="core\Math\Vector3.hpp">
+      <Filter>core\Math</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

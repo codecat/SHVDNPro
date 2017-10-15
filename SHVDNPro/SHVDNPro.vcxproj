@@ -25,7 +25,7 @@
     <CharacterSet>Unicode</CharacterSet>
     <CLRSupport>true</CLRSupport>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <ExtensionsToDeleteOnClean>*.netmodule;*.xdc;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
+    <ExtensionsToDeleteOnClean>*.xdc;$(ExtensionsToDeleteOnClean)</ExtensionsToDeleteOnClean>
     <XDCMakeToolExe>XDCMake.exe</XDCMakeToolExe>
     <XDCMakeToolPath>$(SolutionDir)tools\</XDCMakeToolPath>
   </PropertyGroup>
@@ -42,12 +42,12 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>core;scripting;..\SDK\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>core;..\SDK\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>..\SDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>ScriptHookV.lib;$(IntDir)$(TargetName).netmodule;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ScriptHookV.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Xdcmake>
       <AdditionalDocumentFile>$(IntDir)$(TargetName).xdc;%(AdditionalDocumentFile)</AdditionalDocumentFile>
@@ -56,10 +56,11 @@
   <!-- Specific compilation settings -->
   <ItemDefinitionGroup Condition="'$(Configuration)' == 'Release'">
     <ClCompile>
-      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOSOUND;NOMINMAX;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;WIN32_LEAN_AND_MEAN;NOSOUND;NOMINMAX;NDEBUG;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <LinkTimeCodeGeneration Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Default</LinkTimeCodeGeneration>
     </Link>
     <CsCompile>
       <Optimize>true</Optimize>
@@ -71,11 +72,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-  </ItemGroup>
-  <ItemGroup>
-    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)\ProjectSchema.xml" Condition="'$(ConfigurationType)' != 'Utility'" />
   </ItemGroup>
   <!-- Core source files -->
   <ItemGroup>
@@ -86,7 +83,10 @@
     <ClCompile Include="core\InputArgument.cpp" />
     <ClCompile Include="core\Log.cpp" />
     <ClCompile Include="core\Main.cpp" />
-    <ClCompile Include="core\MemoryAccess.cpp" />
+    <ClCompile Include="core\Math\Matrix.cpp" />
+    <ClCompile Include="core\Math\Quaternion.cpp" />
+    <ClCompile Include="core\Math\Vector2.cpp" />
+    <ClCompile Include="core\Math\Vector3.cpp" />
     <ClCompile Include="core\NativeObjects.cpp" />
     <ClCompile Include="core\OutputArgument.cpp" />
     <ClCompile Include="core\Script.cpp" />
@@ -99,7 +99,10 @@
     <ClInclude Include="core\IScriptTask.h" />
     <ClInclude Include="core\Log.h" />
     <ClInclude Include="core\ManagedGlobals.h" />
-    <ClInclude Include="core\MemoryAccess.h" />
+    <ClInclude Include="core\Math\Matrix.hpp" />
+    <ClInclude Include="core\Math\Quaternion.hpp" />
+    <ClInclude Include="core\Math\Vector2.hpp" />
+    <ClInclude Include="core\Math\Vector3.hpp" />
     <ClInclude Include="core\NativeHashes.h" />
     <ClInclude Include="core\NativeObjects.h" />
     <ClInclude Include="core\OutputArgument.h" />
@@ -110,76 +113,13 @@
     <ClCompile Include="core\ScriptDomain.cpp" />
     <ClCompile Include="core\Tasks\NativeTask.cpp" />
     <ClCompile Include="core\UnmanagedLog.cpp" />
-    <ClCompile Include="scripting\Matrix.cpp" />
-    <ClCompile Include="scripting\Quaternion.cpp" />
-    <ClCompile Include="scripting\Vector2.cpp" />
-    <ClCompile Include="scripting\Vector3.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="core\ScriptDomain.h" />
     <ClInclude Include="core\Tasks\NativeTask.h" />
     <ClInclude Include="core\UnmanagedLog.h" />
-    <ClInclude Include="scripting\Matrix.hpp" />
-    <ClInclude Include="scripting\Quaternion.hpp" />
-    <ClInclude Include="scripting\Vector2.hpp" />
-    <ClInclude Include="scripting\Vector3.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <CsCompile Include="scripting\Audio.cs" />
-    <CsCompile Include="scripting\Blip.cs" />
-    <CsCompile Include="scripting\Bone.cs" />
-    <CsCompile Include="scripting\Camera.cs" />
-    <CsCompile Include="scripting\ButtonCombination.cs" />
-    <CsCompile Include="scripting\Checkpoint.cs" />
-    <CsCompile Include="scripting\Controls.cs" />
-    <CsCompile Include="scripting\Entity.cs" />
-    <CsCompile Include="scripting\Euphoria.cs" />
-    <CsCompile Include="scripting\EuphoriaBase.cs" />
-    <CsCompile Include="scripting\EuphoriaHelpers.cs" />
-    <CsCompile Include="scripting\Font.cs" />
-    <CsCompile Include="scripting\Game.cs" />
-    <CsCompile Include="scripting\Element.cs" />
-    <CsCompile Include="scripting\Interfaces.cs" />
-    <CsCompile Include="scripting\Model.cs" />
-    <CsCompile Include="scripting\Ped.cs" />
-    <CsCompile Include="scripting\PedGroup.cs" />
-    <CsCompile Include="scripting\PedHash.cs" />
-    <CsCompile Include="scripting\Pickup.cs" />
-    <CsCompile Include="scripting\Player.cs" />
-    <CsCompile Include="scripting\Prop.cs" />
-    <CsCompile Include="scripting\RadioStation.cs" />
-    <CsCompile Include="scripting\Raycast.cs" />
-    <CsCompile Include="scripting\Relationship.cs" />
-    <CsCompile Include="scripting\RelationshipGroup.cs" />
-    <CsCompile Include="scripting\Rope.cs" />
-    <CsCompile Include="scripting\Scaleform.cs" />
-    <CsCompile Include="scripting\Screen.cs" />
-    <CsCompile Include="scripting\Sprite.cs" />
-    <CsCompile Include="scripting\Tasks.cs" />
-    <CsCompile Include="scripting\Text.cs" />
-    <CsCompile Include="scripting\Vehicle.cs" />
-    <CsCompile Include="scripting\VehicleDoor.cs" />
-    <CsCompile Include="scripting\VehicleDoorCollection.cs" />
-    <CsCompile Include="scripting\VehicleHash.cs" />
-    <CsCompile Include="scripting\VehicleMod.cs" />
-    <CsCompile Include="scripting\VehicleModCollection.cs" />
-    <CsCompile Include="scripting\VehicleToggleMod.cs" />
-    <CsCompile Include="scripting\VehicleWheel.cs" />
-    <CsCompile Include="scripting\VehicleWheelCollection.cs" />
-    <CsCompile Include="scripting\VehicleWindow.cs" />
-    <CsCompile Include="scripting\VehicleWindowCollection.cs" />
-    <CsCompile Include="scripting\Weapon.cs" />
-    <CsCompile Include="scripting\WeaponAsset.cs" />
-    <CsCompile Include="scripting\WeaponCollection.cs" />
-    <CsCompile Include="scripting\WeaponHash.cs" />
-    <CsCompile Include="scripting\World.cs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <!-- Compile C# source files -->
-  <Target Name="CsCompile" DependsOnTargets="ClCompile" BeforeTargets="Link" AfterTargets="ClCompile" Inputs="@(CsCompile)" Outputs="$(IntDir)$(TargetName).netmodule">
-    <Message Text="Compiling scripting API" />
-    <Csc Sources="@(CsCompile)" AddModules="$(IntDir)Main.obj" TargetType="Module" Optimize="%(CsCompile.Optimize)" DisabledWarnings="%(CsCompile.NoWarn)" OutputAssembly="$(IntDir)$(TargetName).netmodule" DocumentationFile="$(IntDir)$(TargetName).xdc" Condition="'@(CsCompile)' != ''" />
-  </Target>
   <!-- Verify SDK files exist before generating anything -->
   <Target Name="VerifySDKFiles" BeforeTargets="BeforeBuildGenerateSources">
     <ItemGroup>

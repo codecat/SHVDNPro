@@ -5,8 +5,8 @@
 #include <INativeValue.h>
 #include <OutputArgument.h>
 
-#include <Vector2.hpp>
-#include <Vector3.hpp>
+#include <Math/Vector2.hpp>
+#include <Math/Vector3.hpp>
 
 #include <ManagedGlobals.h>
 #include <Log.h>
