@@ -25,7 +25,16 @@ System::UInt64 EncodeObject(System::Object^ obj)
 		obj = System::Convert::ChangeType(obj, type = System::Enum::GetUnderlyingType(type));
 	}
 
-	if (type == System::Boolean::typeid) {
+	if (type == GTA::Native::InputArgument::typeid) {
+		return static_cast<GTA::Native::InputArgument^>(obj)->_data;
+
+	} else if (type == GTA::Native::OutputArgument::typeid) {
+		return System::IntPtr(static_cast<GTA::Native::OutputArgument^>(obj)->GetPointer()).ToInt64();
+
+	} else if (GTA::Native::INativeValue::typeid->IsAssignableFrom(type)) {
+		return static_cast<GTA::Native::INativeValue^>(obj)->NativeValue;
+
+	} else if (type == System::Boolean::typeid) {
 		return static_cast<bool>(obj) ? 1 : 0;
 
 	} else if (type == System::Byte::typeid) {
@@ -60,12 +69,6 @@ System::UInt64 EncodeObject(System::Object^ obj)
 
 	} else if (type == System::IntPtr::typeid) {
 		return static_cast<System::IntPtr>(obj).ToInt64();
-
-	} else if (type == GTA::Native::OutputArgument::typeid) {
-		return System::IntPtr(static_cast<GTA::Native::OutputArgument^>(obj)->GetPointer()).ToInt64();
-
-	} else if (GTA::Native::INativeValue::typeid->IsAssignableFrom(type)) {
-		return static_cast<GTA::Native::INativeValue^>(obj)->NativeValue;
 	}
 
 	GTA::WriteLog("*** Tried encoding unhandled type {0}:\n{1}", type->FullName, System::Environment::StackTrace);

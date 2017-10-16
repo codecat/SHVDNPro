@@ -45,6 +45,7 @@
     <Compile Include="Game\WindowTitle.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="Math\NativeVector3.cs" />
+    <Compile Include="NativeCollection.cs" />
     <Compile Include="NativeMemory.cs" />
     <Compile Include="NaturalMotion\Euphoria.cs" />
     <Compile Include="NaturalMotion\EuphoriaBase.cs" />
