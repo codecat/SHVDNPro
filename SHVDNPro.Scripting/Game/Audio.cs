@@ -119,15 +119,19 @@ namespace GTA
 			Function.Call(Hash.CANCEL_MUSIC_EVENT, musicFile);
 		}
 
-		// Sounds
+        // Sounds
+        public static void PlaySound(string soundFile, string soundSet)
+        {
+            ReleaseSound(PlaySoundFrontend(soundFile, soundSet));
+        }
 
-		/// <summary>
-		/// Plays a sound from the game's sound files at the specified <paramref name="entity"/>.
-		/// </summary>
-		/// <param name="entity">The entity to play the sound at.</param>
-		/// <param name="soundFile">The sound file to play.</param>
-		/// <returns>The identifier of the active sound effect instance.</returns>
-		public static int PlaySoundAt(Entity entity, string soundFile)
+        /// <summary>
+        /// Plays a sound from the game's sound files at the specified <paramref name="entity"/>.
+        /// </summary>
+        /// <param name="entity">The entity to play the sound at.</param>
+        /// <param name="soundFile">The sound file to play.</param>
+        /// <returns>The identifier of the active sound effect instance.</returns>
+        public static int PlaySoundAt(Entity entity, string soundFile)
 		{
 			Function.Call(Hash.PLAY_SOUND_FROM_ENTITY, -1, soundFile, entity.Handle, 0, 0, 0);
 			return Function.Call<int>(Hash.GET_SOUND_ID);
