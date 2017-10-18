@@ -510,40 +510,40 @@ namespace GTA
 			return Function.Call<bool>(Hash.IS_CONTROL_JUST_RELEASED, 0, control);
 		}
 
-        /// <summary>
+		/// <summary>
 		/// Gets whether a <see cref="Control"/> is disabled and currently pressed.
 		/// </summary>
 		/// <param name="control">The <see cref="Control"/> to check.</param>
 		/// <returns><c>true</c> if the <see cref="Control"/> is pressed; otherwise, <c>false</c></returns>
 		public static bool IsDisabledControlPressed(Control control)
-        {
-            return Function.Call<bool>(Hash.IS_DISABLED_CONTROL_PRESSED, 0, control);
-        }
-        /// <summary>
-        /// Gets whether a <see cref="Control"/> is disabled and was just pressed this frame.
-        /// </summary>
-        /// <param name="control">The <see cref="Control"/> to check.</param>
-        /// <returns><c>true</c> if the <see cref="Control"/> was just pressed this frame; otherwise, <c>false</c></returns>
-        public static bool IsDisabledControlJustPressed(Control control)
-        {
-            return Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, 0, control);
-        }
-        /// <summary>
-        /// Gets whether a <see cref="Control"/> is disabled and was just released this frame.
-        /// </summary>
-        /// <param name="control">The <see cref="Control"/> to check.</param>
-        /// <returns><c>true</c> if the <see cref="Control"/> was just released this frame; otherwise, <c>false</c></returns>
-        public static bool IsDisabledControlJustReleased(Control control)
-        {
-            return Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_RELEASED, 0, control);
-        }
+		{
+			return Function.Call<bool>(Hash.IS_DISABLED_CONTROL_PRESSED, 0, control);
+		}
+		/// <summary>
+		/// Gets whether a <see cref="Control"/> is disabled and was just pressed this frame.
+		/// </summary>
+		/// <param name="control">The <see cref="Control"/> to check.</param>
+		/// <returns><c>true</c> if the <see cref="Control"/> was just pressed this frame; otherwise, <c>false</c></returns>
+		public static bool IsDisabledControlJustPressed(Control control)
+		{
+			    return Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_PRESSED, 0, control);
+		}
+		/// <summary>
+		/// Gets whether a <see cref="Control"/> is disabled and was just released this frame.
+		/// </summary>
+		/// <param name="control">The <see cref="Control"/> to check.</param>
+		/// <returns><c>true</c> if the <see cref="Control"/> was just released this frame; otherwise, <c>false</c></returns>
+		public static bool IsDisabledControlJustReleased(Control control)
+		{
+			    return Function.Call<bool>(Hash.IS_DISABLED_CONTROL_JUST_RELEASED, 0, control);
+		}
 
-        /// <summary>
-        /// Gets whether a <see cref="Control"/> is enabled or disabled this frame.
-        /// </summary>
-        /// <param name="control">The <see cref="Control"/> to check.</param>
-        /// <returns><c>true</c> if the <see cref="Control"/> is Enabled; otherwise, <c>false</c></returns>
-        public static bool IsControlEnabled(Control control)
+		/// <summary>
+		/// Gets whether a <see cref="Control"/> is enabled or disabled this frame.
+		/// </summary>
+		/// <param name="control">The <see cref="Control"/> to check.</param>
+		/// <returns><c>true</c> if the <see cref="Control"/> is Enabled; otherwise, <c>false</c></returns>
+		public static bool IsControlEnabled(Control control)
 		{
 			return Function.Call<bool>(Hash.IS_CONTROL_ENABLED, 0, control);
 		}
