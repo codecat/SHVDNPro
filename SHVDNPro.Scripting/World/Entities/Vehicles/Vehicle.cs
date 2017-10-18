@@ -18,7 +18,7 @@ namespace GTA
 		BlueOnWhite2 = 0,
 		BlueOnWhite3 = 4,
 		YellowOnBlack = 1,
-		YellowOnBlue = 2,		
+		YellowOnBlue = 2,
 		NorthYankton = 5
 	}
 	public enum LicensePlateType
@@ -404,7 +404,7 @@ namespace GTA
 				{
 					return 0.0f;
 				}
-				
+
 				return Function.Call<float>(Hash._GET_HELI_MAIN_ROTOR_HEALTH, Handle);
 			}
 			set
@@ -413,7 +413,7 @@ namespace GTA
 				{
 					return;
 				}
-				
+
 				if (!Model.IsHelicopter)
 				{
 					return;
@@ -439,7 +439,7 @@ namespace GTA
 				{
 					return 0.0f;
 				}
-				
+
 				return Function.Call<float>(Hash._GET_HELI_TAIL_ROTOR_HEALTH, Handle);
 			}
 			set
@@ -447,8 +447,8 @@ namespace GTA
 				if (MemoryAddress == IntPtr.Zero)
 				{
 					return;
-				}				
-				
+				}
+
 				if (!Model.IsHelicopter)
 				{
 					return;
@@ -474,7 +474,7 @@ namespace GTA
 				{
 					return 0.0f;
 				}
-				
+
 				return Function.Call<float>(Hash._GET_HELI_ENGINE_HEALTH, Handle);
 			}
 			set
@@ -482,8 +482,8 @@ namespace GTA
 				if (MemoryAddress == IntPtr.Zero)
 				{
 					return;
-				}				
-				
+				}
+
 				if (!Model.IsHelicopter)
 				{
 					return;
@@ -498,7 +498,7 @@ namespace GTA
 				MemoryAccess.WriteFloat(MemoryAddress + offset, value);
 			}
 		}
-		
+
 		/// <summary>
 		/// Gets or sets this <see cref="Vehicle"/> fuel level.
 		/// </summary>
@@ -580,7 +580,7 @@ namespace GTA
 				{
 					return 0.0f;
 				}
-				
+
 				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0xB2C : 0xB1C;
 				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0xB4C : offset;
 				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0xB7C : offset;
@@ -729,8 +729,8 @@ namespace GTA
 				if (MemoryAddress == IntPtr.Zero)
 				{
 					return 0.0f;
-				}				
-				
+				}
+
 				if (!Model.IsHelicopter)
 				{
 					return 0.0f;
@@ -750,7 +750,7 @@ namespace GTA
 				{
 					return;
 				}
-				
+
 				Function.Call(Hash.SET_HELI_BLADES_SPEED, Handle, value);
 			}
 		}
@@ -865,384 +865,384 @@ namespace GTA
 					return 0;
 				}
 
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A2 : 0x792;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C2 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E2 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F2 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x812 : offset;
-                
-                return MemoryAccess.ReadByte(MemoryAddress + offset);
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
-                
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A2 : 0x792;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C2 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E2 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F2 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x812 : offset;
-                
-                MemoryAccess.WriteByte(MemoryAddress + offset, value);
-            }
-        }
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A2 : 0x792;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C2 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E2 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F2 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x812 : offset;
 
-        /// <summary>
+				return MemoryAccess.ReadByte(MemoryAddress + offset);
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A2 : 0x792;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C2 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E2 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F2 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x812 : offset;
+
+				MemoryAccess.WriteByte(MemoryAddress + offset, value);
+			}
+		}
+
+		/// <summary>
 		/// Gets the engine temperature of this <see cref="Vehicle"/>.
 		/// </summary>
 		public float EngineTemperature
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x984 : 0;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x9AC : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x9BC : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x9DC : offset;
-
-                return MemoryAccess.ReadFloat(MemoryAddress + offset);
-            }
-        }
-
-        /// <summary>
-        /// Gets the oil volume of this <see cref="Vehicle"/>.
-        /// </summary>
-        public float OilVolume
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-
-                return MemoryAccess.ReadFloat(MemoryAddress + 0x0104);
-            }
-        }
-
-        /// <summary>
-        /// Gets the petrol tank volume of this <see cref="Vehicle"/>.
-        /// </summary>
-        public float PetrolTankVolume
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-                return MemoryAccess.ReadFloat(MemoryAddress + 0x0100);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the current clutch of this <see cref="Vehicle"/>.
-        /// </summary>
-        public float Clutch
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7E0 : 0x7D0;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x800 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x820 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x830 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x850 : offset;
-
-                return MemoryAccess.ReadFloat(MemoryAddress + offset);
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7E0 : 0x7D0;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x800 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x820 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x830 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x850 : offset;
-
-                MemoryAccess.WriteFloat(MemoryAddress + offset, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the current turbo value of this <see cref="Vehicle"/>.
-        /// </summary>
-        public float Turbo
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7F8 : 0x7D8;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x818 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x838 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x848 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x868 : offset;
-
-                return MemoryAccess.ReadFloat(MemoryAddress + offset);
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7F8 : 0x7D8;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x818 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x838 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x848 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x868 : offset;
-
-
-                MemoryAccess.WriteFloat(MemoryAddress + offset, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the gears value of this <see cref="Vehicle"/>.
-        /// </summary>
-        public int Gears
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A0 : 0x790;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x810 : offset;
-
-                return MemoryAccess.ReadInt(MemoryAddress + offset);
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A0 : 0x790;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x810 : offset;
-
-
-                MemoryAccess.WriteInt(MemoryAddress + offset, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the next gear value of this <see cref="Vehicle"/>.
-        /// </summary>
-        public float NextGear
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A0 : 0x790;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x810 : offset;
-
-                return MemoryAccess.ReadFloat(MemoryAddress + offset);
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A0 : 0x790;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F0 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x810 : offset;
-
-
-                MemoryAccess.WriteFloat(MemoryAddress + offset, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the current throttle of this <see cref="Vehicle"/>.
-        /// </summary>
-        public float Throttle
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7E4 : 0x7D4;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x804 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x824 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x834 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x854 : offset;
-
-                return MemoryAccess.ReadFloat(MemoryAddress + offset);
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7E4 : 0x7D4;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x804 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x824 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x834 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x854 : offset;
-
-                MemoryAccess.WriteFloat(MemoryAddress + offset, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the current throttle power of this <see cref="Vehicle"/>.
-        /// </summary>
-        public float ThrottlePower
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8B4 : 0x8A4;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8D4 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x8FC : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x90C : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x92C : offset;
-
-                return MemoryAccess.ReadFloat(MemoryAddress + offset);
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8B4 : 0x8A4;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8D4 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x8FC : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x90C : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x92C : offset;
-
-                MemoryAccess.WriteFloat(MemoryAddress + offset, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the current brake power of this <see cref="Vehicle"/>.
-        /// </summary>
-        public float BrakePower
-        {
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8B8 : 0x8A8;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8D8 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x900 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x910 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x930 : offset;
-
-                return MemoryAccess.ReadFloat(MemoryAddress + offset);
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
-
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8B8 : 0x8A8;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8D8 : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x900 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x910 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x930 : offset;
-
-                MemoryAccess.WriteFloat(MemoryAddress + offset, value);
-            }
-        }
-
-        /// <summary>
-        /// Gets the steering angle of this <see cref="Vehicle"/>.
-        /// </summary>
-        /// <value>
-        /// The steering angle in degrees.
-        /// </value>
-        public float SteeringAngle
 		{
-            get
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return 0.0f;
-                }
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
 
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8AC : 0x89C;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8CC : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x8F4 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x904 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x924 : offset;
+				int offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x984 : 0;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x9AC : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x9BC : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x9DC : offset;
 
-                return (float)(MemoryAccess.ReadFloat(MemoryAddress + offset) * (180.0 / System.Math.PI));
-            }
-            set
-            {
-                if (MemoryAddress == IntPtr.Zero)
-                {
-                    return;
-                }
+				return MemoryAccess.ReadFloat(MemoryAddress + offset);
+			}
+		}
 
-                int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8AC : 0x89C;
-                offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8CC : offset;
-                offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x8F4 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x904 : offset;
-                offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x924 : offset;
+		/// <summary>
+		/// Gets the oil volume of this <see cref="Vehicle"/>.
+		/// </summary>
+		public float OilVolume
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
 
-                MemoryAccess.WriteFloat(MemoryAddress + offset, value);
-            }
-        }
+				return MemoryAccess.ReadFloat(MemoryAddress + 0x0104);
+			}
+		}
+
+		/// <summary>
+		/// Gets the petrol tank volume of this <see cref="Vehicle"/>.
+		/// </summary>
+		public float PetrolTankVolume
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
+				return MemoryAccess.ReadFloat(MemoryAddress + 0x0100);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the current clutch of this <see cref="Vehicle"/>.
+		/// </summary>
+		public float Clutch
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7E0 : 0x7D0;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x800 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x820 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x830 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x850 : offset;
+
+				return MemoryAccess.ReadFloat(MemoryAddress + offset);
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7E0 : 0x7D0;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x800 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x820 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x830 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x850 : offset;
+
+				MemoryAccess.WriteFloat(MemoryAddress + offset, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the current turbo value of this <see cref="Vehicle"/>.
+		/// </summary>
+		public float Turbo
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7F8 : 0x7D8;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x818 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x838 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x848 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x868 : offset;
+
+				return MemoryAccess.ReadFloat(MemoryAddress + offset);
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7F8 : 0x7D8;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x818 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x838 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x848 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x868 : offset;
+
+
+				MemoryAccess.WriteFloat(MemoryAddress + offset, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the gears value of this <see cref="Vehicle"/>.
+		/// </summary>
+		public int Gears
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A0 : 0x790;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x810 : offset;
+
+				return MemoryAccess.ReadInt(MemoryAddress + offset);
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A0 : 0x790;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x810 : offset;
+
+
+				MemoryAccess.WriteInt(MemoryAddress + offset, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the next gear value of this <see cref="Vehicle"/>.
+		/// </summary>
+		public float NextGear
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A0 : 0x790;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x810 : offset;
+
+				return MemoryAccess.ReadFloat(MemoryAddress + offset);
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7A0 : 0x790;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x7C0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x7E0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x7F0 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x810 : offset;
+
+
+				MemoryAccess.WriteFloat(MemoryAddress + offset, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the current throttle of this <see cref="Vehicle"/>.
+		/// </summary>
+		public float Throttle
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7E4 : 0x7D4;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x804 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x824 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x834 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x854 : offset;
+
+				return MemoryAccess.ReadFloat(MemoryAddress + offset);
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x7E4 : 0x7D4;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x804 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x824 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x834 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x854 : offset;
+
+				MemoryAccess.WriteFloat(MemoryAddress + offset, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the current throttle power of this <see cref="Vehicle"/>.
+		/// </summary>
+		public float ThrottlePower
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8B4 : 0x8A4;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8D4 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x8FC : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x90C : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x92C : offset;
+
+				return MemoryAccess.ReadFloat(MemoryAddress + offset);
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8B4 : 0x8A4;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8D4 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x8FC : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x90C : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x92C : offset;
+
+				MemoryAccess.WriteFloat(MemoryAddress + offset, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the current brake power of this <see cref="Vehicle"/>.
+		/// </summary>
+		public float BrakePower
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8B8 : 0x8A8;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8D8 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x900 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x910 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x930 : offset;
+
+				return MemoryAccess.ReadFloat(MemoryAddress + offset);
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8B8 : 0x8A8;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8D8 : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x900 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x910 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x930 : offset;
+
+				MemoryAccess.WriteFloat(MemoryAddress + offset, value);
+			}
+		}
+
+		/// <summary>
+		/// Gets the steering angle of this <see cref="Vehicle"/>.
+		/// </summary>
+		/// <value>
+		/// The steering angle in degrees.
+		/// </value>
+		public float SteeringAngle
+		{
+			get
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return 0.0f;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8AC : 0x89C;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8CC : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x8F4 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x904 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x924 : offset;
+
+				return (float)(MemoryAccess.ReadFloat(MemoryAddress + offset) * (180.0 / System.Math.PI));
+			}
+			set
+			{
+				if (MemoryAddress == IntPtr.Zero)
+				{
+					return;
+				}
+
+				int offset = Game.Version >= GameVersion.v1_0_372_2_Steam ? 0x8AC : 0x89C;
+				offset = Game.Version >= GameVersion.v1_0_877_1_Steam ? 0x8CC : offset;
+				offset = Game.Version >= GameVersion.v1_0_944_2_Steam ? 0x8F4 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1103_2_Steam ? 0x904 : offset;
+				offset = Game.Version >= GameVersion.v1_0_1180_2_Steam ? 0x924 : offset;
+
+				MemoryAccess.WriteFloat(MemoryAddress + offset, value);
+			}
+		}
 		/// <summary>
 		/// Gets or sets the steering scale of this <see cref="Vehicle"/>.
 		/// </summary>
@@ -1437,7 +1437,7 @@ namespace GTA
 		{
 			set
 			{
-				// Sets if the siren is silent actually 
+				// Sets if the siren is silent actually
 				Function.Call(Hash.DISABLE_VEHICLE_IMPACT_EXPLOSION_ACTIVATION, Handle, value);
 			}
 		}
@@ -1516,7 +1516,7 @@ namespace GTA
 		/// <c>true</c> if this <see cref="Vehicle"/> drops money when destroyed; otherwise, <c>false</c>.
 		/// </value>
 		public bool DropsMoneyOnExplosion
-		{		   
+		{
 			get
 			{
 				IntPtr memoryAddress = MemoryAddress;
@@ -2102,7 +2102,7 @@ namespace GTA
 				result[0] = driver;
 
 				for (int i = 0, j = 0, seats = PassengerCapacity; i < seats && j < result.Length; i++)
-				{												  
+				{
 					if (!IsSeatFree((VehicleSeat)i))
 					{
 						result[j++ + 1] = GetPedOnSeat((VehicleSeat)i);
