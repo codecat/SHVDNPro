@@ -43,6 +43,11 @@ namespace GTA.Tasks
 			m_items.Add(new NativeCollectionItem(hash, args));
 		}
 
+		public void AddRange(IEnumerable<NativeCollectionItem> items)
+		{
+			m_items.AddRange(items);
+		}
+
 		public void Run()
 		{
 			foreach (var item in m_items) {

@@ -3,7 +3,7 @@ using System.Drawing;
 using GTA.Math;
 using GTA.Native;
 
-namespace GTA
+namespace GTA.UI
 {
 	public sealed class ScaleformArgumentTXD
 	{

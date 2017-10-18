@@ -120,6 +120,10 @@ namespace GTA
 		}
 
 		// Sounds
+		public static void PlaySound(string soundFile, string soundSet)
+		{
+			    ReleaseSound(PlaySoundFrontend(soundFile, soundSet));
+		}
 
 		/// <summary>
 		/// Plays a sound from the game's sound files at the specified <paramref name="entity"/>.
