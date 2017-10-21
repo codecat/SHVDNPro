@@ -34,6 +34,14 @@ void LoadScriptDomain()
 {
 	auto curDir = System::IO::Path::GetDirectoryName(System::Reflection::Assembly::GetExecutingAssembly()->Location);
 
+	System::String^ strPath = System::Environment::GetEnvironmentVariable("PATH");
+	if (!strPath->EndsWith(";")) {
+		strPath += ";";
+	}
+	strPath += curDir + ";";
+	strPath += curDir + "\\Scripts;";
+	System::Environment::SetEnvironmentVariable("PATH", strPath);
+
 	auto setup = gcnew System::AppDomainSetup();
 	setup->ApplicationBase = System::IO::Path::GetFullPath(curDir + "\\Scripts");
 	setup->ShadowCopyFiles = "false"; // !?
