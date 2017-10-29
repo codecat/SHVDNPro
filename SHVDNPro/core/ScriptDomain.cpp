@@ -126,7 +126,16 @@ bool GTA::ScriptDomain::ScriptInit(int scriptIndex, void* fiberMain, void* fiber
 	m_scripts[scriptIndex] = script;
 	script->m_fiberMain = fiberMain;
 	script->m_fiberCurrent = fiberScript;
-	script->OnInit();
+
+	try {
+		script->OnInit();
+	} catch (System::Exception^ ex) {
+		GTA::WriteLog("*** Exception in script OnInit: {0}", ex->ToString());
+		return false;
+	} catch (...) {
+		GTA::WriteLog("*** Unmanaged exception in script OnInit!");
+		return false;
+	}
 
 	return true;
 }
@@ -156,11 +165,24 @@ void GTA::ScriptDomain::ScriptResetWaitTime(int scriptIndex)
 
 void GTA::ScriptDomain::ScriptTick(int scriptIndex)
 {
-	auto script = m_scripts[scriptIndex];
-	if (script != nullptr) {
-		script->ProcessOneTick();
+	try {
+		auto script = m_scripts[scriptIndex];
+		if (script != nullptr) {
+			script->ProcessOneTick();
+		}
+	} catch (System::Exception^ ex) {
+		GTA::WriteLog("*** Exception in script ProcessOneTick: {0}", ex->ToString());
+	} catch (...) {
+		GTA::WriteLog("*** Unmanaged exception in script ProcessOneTick!");
 	}
-	GTA::Native::Function::ClearStringPool();
+
+	try {
+		GTA::Native::Function::ClearStringPool();
+	} catch (System::Exception^ ex) {
+		GTA::WriteLog("*** Exception while clearing string pool: {0}", ex->ToString());
+	} catch (...) {
+		GTA::WriteLog("*** Unmanaged exception while clearning string pool!");
+	}
 }
 
 void GTA::ScriptDomain::QueueKeyboardEvent(System::Tuple<bool, System::Windows::Forms::Keys>^ ev)
