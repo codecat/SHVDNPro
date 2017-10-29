@@ -27,7 +27,13 @@ namespace ExampleScript
 
 		public override void OnTick()
 		{
-			Function.Call(Hash.DRAW_RECT, 0.1f, 0.0f, 0.1f, 0.1f, 255, 0, 0, 255);
+			Function.Call(Hash.DRAW_RECT, 0.1f, 0.2f, 0.1f, 0.1f, 255, 0, 0, 255);
+			Function.Call(Hash.DRAW_RECT, 0.3f, 0.2f, 0.1f, 0.1f, 0, 255, 0, 255);
+			Function.Call(Hash.DRAW_RECT, 0.5f, 0.2f, 0.1f, 0.1f, 0, 0, 255, 255);
+		}
+
+		public override void OnKeyDown(KeyEventArgs args)
+		{
 		}
 
 		public override void OnPresent(IntPtr swapchain)

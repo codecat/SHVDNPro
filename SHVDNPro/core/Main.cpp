@@ -34,6 +34,14 @@ void LoadScriptDomain()
 {
 	auto curDir = System::IO::Path::GetDirectoryName(System::Reflection::Assembly::GetExecutingAssembly()->Location);
 
+	System::String^ strPath = System::Environment::GetEnvironmentVariable("PATH");
+	if (!strPath->EndsWith(";")) {
+		strPath += ";";
+	}
+	strPath += curDir + ";";
+	strPath += curDir + "\\Scripts;";
+	System::Environment::SetEnvironmentVariable("PATH", strPath);
+
 	auto setup = gcnew System::AppDomainSetup();
 	setup->ApplicationBase = System::IO::Path::GetFullPath(curDir + "\\Scripts");
 	setup->ShadowCopyFiles = "false"; // !?
@@ -126,7 +134,7 @@ struct ScriptFiberInfo
 
 static HMODULE _instance;
 
-static std::vector<ScriptFiberInfo> _scriptFibers; //TODO: Add stuff to this
+static std::vector<ScriptFiberInfo*> _scriptFibers;
 
 static void ScriptMainFiber(LPVOID pv)
 {
@@ -161,6 +169,7 @@ static void ScriptMain(int index)
 	fi.m_fiberScript = CreateFiber(0, ScriptMainFiber, (LPVOID)&fi);
 	fi.m_initialized = false;
 	fi.m_defect = false;
+	_scriptFibers.push_back(&fi);
 
 	UnmanagedLogWrite("ScriptMain(%d) -> Initialized: %d, defect: %d (main: %p, script: %p)\n", index, (int)fi.m_initialized, (int)fi.m_defect, fi.m_fiberMain, fi.m_fiberScript);
 
@@ -320,7 +329,7 @@ BOOL APIENTRY DllMain(HMODULE hInstance, DWORD reason, LPVOID lpReserved)
 		scriptUnregister(hInstance);
 
 		for (auto fi : _scriptFibers) {
-			DeleteFiber(fi.m_fiberScript);
+			DeleteFiber(fi->m_fiberScript);
 		}
 	}
 

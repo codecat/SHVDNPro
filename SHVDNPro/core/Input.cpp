@@ -7,6 +7,10 @@
 
 void ManagedScriptKeyboardMessage(unsigned long key, unsigned short repeats, unsigned char scanCode, bool isExtended, bool isWithAlt, bool wasDownBefore, bool isUpNow)
 {
+	if (GTA::ManagedGlobals::g_scriptDomain == nullptr) {
+		return;
+	}
+
 	if (key >= (unsigned long)GTA::Input::_keyboardState->Length) {
 		return;
 	}
