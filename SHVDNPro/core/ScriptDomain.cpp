@@ -202,10 +202,18 @@ void GTA::ScriptDomain::OnUnhandledException(System::Object^ sender, System::Unh
 
 System::Reflection::Assembly^ GTA::ScriptDomain::OnAssemblyResolve(System::Object^ sender, System::ResolveEventArgs^ args)
 {
+	if (args->RequestingAssembly != nullptr) {
+		GTA::WriteLog("Resolving assembly: \"{0}\" from: \"{1}\"", args->Name, args->RequestingAssembly->FullName);
+	} else {
+		GTA::WriteLog("Resolving assembly: \"{0}\"", args->Name);
+	}
+
 	auto exeAssembly = System::Reflection::Assembly::GetExecutingAssembly();
 	if (args->Name == exeAssembly->FullName) {
+		GTA::WriteLog("  Returning exeAssembly: \"{0}\"", exeAssembly->FullName);
 		return exeAssembly;
 	}
 
+	GTA::WriteLog("  Returning nullptr");
 	return nullptr;
 }
